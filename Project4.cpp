@@ -1,4 +1,4 @@
-# STARTER CODE FROM PADLET
+// STARTER CODE FROM PADLET
 
 #include <iostream>
 
