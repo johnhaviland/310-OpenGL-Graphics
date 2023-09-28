@@ -108,15 +108,15 @@ void display() {
     glVertex2f(418, 106);     // Top-right vertex
     glVertex2f(337, 90);     // Top-left vertex
     glEnd();
-/*
+
     // #12
     glBegin(GL_LINE_LOOP);
-    glVertex2f(250, 450);     // Bottom-left vertex
-    glVertex2f(350, 450);     // Bottom-right vertex
-    glVertex2f(350, 500);     // Top-right vertex
-    glVertex2f(250, 500);     // Top-left vertex
+    glVertex2f(256, 546);     // Bottom-left vertex
+    glVertex2f(307, 569);     // Bottom-right vertex
+    glVertex2f(317, 195);     // Top-right vertex
+    glVertex2f(272, 221);     // Top-left vertex
     glEnd();
-
+/*
     // #13
     glBegin(GL_LINE_LOOP);
     glVertex2f(250, 500);     // Bottom-left vertex
