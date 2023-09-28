@@ -1,7 +1,7 @@
 #include <GL/glut.h>
 
 void display() {
-    // Set the clear color to sky blue (R=135, G=206, B=235, A=1)
+    // Set the clear color to sky blue (sky background)
     glClearColor(0.529f, 0.808f, 0.922f, 1.0f);
 
     glClear(GL_COLOR_BUFFER_BIT);
@@ -18,8 +18,8 @@ void display() {
     // Translate back to the original position
     glTranslatef(-485 / 2, -662 / 2, 0.0f);
 
-    // Set the outline color to white
-    glColor3f(0.0, 0.0, 0.0);  // black color
+    // Set the outline color to black
+    glColor3f(0.0, 0.0, 0.0);
 
     // #1
     glBegin(GL_LINE_LOOP);
