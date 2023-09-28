@@ -116,47 +116,47 @@ void display() {
     glVertex2f(317, 195);     // Top-right vertex
     glVertex2f(272, 221);     // Top-left vertex
     glEnd();
-/*
+
     // #13
     glBegin(GL_LINE_LOOP);
-    glVertex2f(250, 500);     // Bottom-left vertex
-    glVertex2f(400, 400);     // Bottom-right vertex
-    glVertex2f(400, 450);     // Top-right vertex
-    glVertex2f(250, 600);     // Top-left vertex
+    glVertex2f(272, 221);     // Bottom-left vertex
+    glVertex2f(317, 195);     // Bottom-right vertex
+    glVertex2f(321, 69);     // Top-right vertex
+    glVertex2f(275, 104);     // Top-left vertex
     glEnd();
 
     // #14
     glBegin(GL_LINE_LOOP);
-    glVertex2f(250, 400);     // Bottom-left vertex
-    glVertex2f(350, 450);     // Bottom-right vertex
-    glVertex2f(400, 400);     // Top-right vertex
-    glVertex2f(250, 600);     // Top-left vertex
+    glVertex2f(184, 194);     // Bottom-left vertex
+    glVertex2f(276, 125);     // Bottom-right vertex
+    glVertex2f(275, 104);     // Top-right vertex
+    glVertex2f(183, 178);     // Top-left vertex
     glEnd();
 
     // #15
     glBegin(GL_LINE_LOOP);
-    glVertex2f(250, 500);     // Bottom-left vertex
-    glVertex2f(400, 400);     // Bottom-right vertex
-    glVertex2f(350, 450);     // Top-right vertex
-    glVertex2f(250, 600);     // Top-left vertex
+    glVertex2f(262, 606);     // Bottom-left vertex
+    glVertex2f(304, 628);     // Bottom-right vertex
+    glVertex2f(306, 569);     // Top-right vertex
+    glVertex2f(264, 550);     // Top-left vertex
     glEnd();
 
     // #16
     glBegin(GL_LINE_LOOP);
-    glVertex2f(250, 400);     // Bottom-left vertex
-    glVertex2f(350, 450);     // Bottom-right vertex
-    glVertex2f(350, 500);     // Top-right vertex
-    glVertex2f(250, 600);     // Top-left vertex
+    glVertex2f(260, 620);     // Bottom-left vertex
+    glVertex2f(304, 642);     // Bottom-right vertex
+    glVertex2f(304, 628);     // Top-right vertex
+    glVertex2f(262, 606);     // Top-left vertex
     glEnd();
 
     // #17
     glBegin(GL_LINE_LOOP);
-    glVertex2f(250, 500);     // Bottom-left vertex
-    glVertex2f(275, 550);     // Bottom-right vertex
-    glVertex2f(275, 600);     // Top-right vertex
-    glVertex2f(250, 600);     // Top-left vertex
+    glVertex2f(175, 623);     // Bottom-left vertex
+    glVertex2f(262, 606);     // Bottom-right vertex
+    glVertex2f(265, 539);     // Top-right vertex
+    glVertex2f(180, 553);     // Top-left vertex
     glEnd();
-
+/*
     // #18
     glBegin(GL_LINE_LOOP);
     glVertex2f(250, 500);     // Bottom-left vertex
