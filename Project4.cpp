@@ -3,97 +3,109 @@
 void display() {
     glClear(GL_COLOR_BUFFER_BIT);
 
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    // Translate the scene to the center
+    glTranslatef(485 / 2, 662 / 2, 0.0f);
+
+    // Apply a 180-degree rotation around the Z-axis
+    glRotatef(180.0f, 0.0f, 0.0f, 1.0f);
+
+    // Translate back to the original position
+    glTranslatef(-485 / 2, -662 / 2, 0.0f);
+
     // Set the outline color to white
     glColor3f(1.0, 1.0, 1.0);  // White color
 
     // #1
     glBegin(GL_LINE_LOOP);
-    glVertex2f(100, 100);     // Bottom-left vertex
-    glVertex2f(400, 100);     // Bottom-right vertex
-    glVertex2f(400, 400);     // Top-right vertex
-    glVertex2f(100, 400);     // Top-left vertex
+    glVertex2f(307, 569);     // Bottom-left vertex
+    glVertex2f(428, 538);     // Bottom-right vertex
+    glVertex2f(433, 217);     // Top-right vertex
+    glVertex2f(317, 195);     // Top-left vertex
     glEnd();
-/*
+
     // #2
     glBegin(GL_LINE_LOOP);
-    glVertex2f(150, 150);     // Bottom-left vertex
-    glVertex2f(350, 150);     // Bottom-right vertex
-    glVertex2f(350, 350);     // Top-right vertex
-    glVertex2f(150, 350);     // Top-left vertex
+    glVertex2f(329, 446);     // Bottom-left vertex
+    glVertex2f(421, 450);     // Bottom-right vertex
+    glVertex2f(421, 329);     // Top-right vertex
+    glVertex2f(331, 321);     // Top-left vertex
     glEnd();
 
     // #3
     glBegin(GL_LINE_LOOP);
-    glVertex2f(200, 200);     // Bottom-left vertex
-    glVertex2f(300, 200);     // Bottom-right vertex
-    glVertex2f(300, 300);     // Top-right vertex
-    glVertex2f(200, 300);     // Top-left vertex
+    glVertex2f(412, 451);     // Bottom-left vertex
+    glVertex2f(421, 450);     // Bottom-right vertex
+    glVertex2f(421, 329);     // Top-right vertex
+    glVertex2f(412, 333);     // Top-left vertex
     glEnd();
 
     // #4
     glBegin(GL_LINE_LOOP);
-    glVertex2f(250, 250);     // Bottom-left vertex
-    glVertex2f(270, 250);     // Bottom-right vertex
-    glVertex2f(270, 270);     // Top-right vertex
-    glVertex2f(250, 270);     // Top-left vertex
+    glVertex2f(332, 326);     // Bottom-left vertex
+    glVertex2f(412, 333);     // Bottom-right vertex
+    glVertex2f(421, 329);     // Top-right vertex
+    glVertex2f(331, 321);     // Top-left vertex
     glEnd();
 
     // #5
     glBegin(GL_LINE_LOOP);
-    glVertex2f(250, 300);     // Bottom-left vertex
-    glVertex2f(300, 300);     // Bottom-right vertex
-    glVertex2f(300, 350);     // Top-right vertex
-    glVertex2f(250, 350);     // Top-left vertex
+    glVertex2f(304, 628);     // Bottom-left vertex
+    glVertex2f(427, 595);     // Bottom-right vertex
+    glVertex2f(428, 538);     // Top-right vertex
+    glVertex2f(306, 569);     // Top-left vertex
     glEnd();
 
     // #6
     glBegin(GL_LINE_LOOP);
-    glVertex2f(250, 350);     // Bottom-left vertex
-    glVertex2f(300, 350);     // Bottom-right vertex
-    glVertex2f(300, 400);     // Top-right vertex
-    glVertex2f(250, 400);     // Top-left vertex
+    glVertex2f(304, 642);     // Bottom-left vertex
+    glVertex2f(427, 611);     // Bottom-right vertex
+    glVertex2f(427, 595);     // Top-right vertex
+    glVertex2f(304, 628);     // Top-left vertex
     glEnd();
 
     // #7
     glBegin(GL_LINE_LOOP);
-    glVertex2f(250, 400);     // Bottom-left vertex
-    glVertex2f(400, 400);     // Bottom-right vertex
-    glVertex2f(400, 450);     // Top-right vertex
-    glVertex2f(250, 450);     // Top-left vertex
+    glVertex2f(427, 611);     // Bottom-left vertex
+    glVertex2f(485, 643);     // Bottom-right vertex
+    glVertex2f(485, 73);     // Top-right vertex
+    glVertex2f(431, 94);     // Top-left vertex
     glEnd();
 
     // #8
     glBegin(GL_LINE_LOOP);
-    glVertex2f(250, 450);     // Bottom-left vertex
-    glVertex2f(350, 450);     // Bottom-right vertex
-    glVertex2f(350, 500);     // Top-right vertex
-    glVertex2f(250, 500);     // Top-left vertex
+    glVertex2f(317, 195);     // Bottom-left vertex
+    glVertex2f(433, 217);     // Bottom-right vertex
+    glVertex2f(431, 94);     // Top-right vertex
+    glVertex2f(322, 67);     // Top-left vertex
     glEnd();
 
     // #9
     glBegin(GL_LINE_LOOP);
-    glVertex2f(250, 500);     // Bottom-left vertex
-    glVertex2f(300, 500);     // Bottom-right vertex
-    glVertex2f(300, 550);     // Top-right vertex
-    glVertex2f(250, 550);     // Top-left vertex
+    glVertex2f(335, 189);     // Bottom-left vertex
+    glVertex2f(418, 203);     // Bottom-right vertex
+    glVertex2f(418, 106);     // Top-right vertex
+    glVertex2f(337, 90);     // Top-left vertex
     glEnd();
 
     // #10
     glBegin(GL_LINE_LOOP);
-    glVertex2f(250, 550);     // Bottom-left vertex
-    glVertex2f(275, 550);     // Bottom-right vertex
-    glVertex2f(275, 600);     // Top-right vertex
-    glVertex2f(250, 600);     // Top-left vertex
+    glVertex2f(409, 203);     // Bottom-left vertex
+    glVertex2f(418, 203);     // Bottom-right vertex
+    glVertex2f(418, 106);     // Top-right vertex
+    glVertex2f(410, 110);     // Top-left vertex
     glEnd();
 
     // #11
     glBegin(GL_LINE_LOOP);
-    glVertex2f(250, 400);     // Bottom-left vertex
-    glVertex2f(400, 400);     // Bottom-right vertex
-    glVertex2f(350, 450);     // Top-right vertex
-    glVertex2f(250, 450);     // Top-left vertex
+    glVertex2f(336, 95);     // Bottom-left vertex
+    glVertex2f(410, 110);     // Bottom-right vertex
+    glVertex2f(418, 106);     // Top-right vertex
+    glVertex2f(337, 90);     // Top-left vertex
     glEnd();
-
+/*
     // #12
     glBegin(GL_LINE_LOOP);
     glVertex2f(250, 450);     // Bottom-left vertex
@@ -388,8 +400,8 @@ void reshape(int width, int height) {
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-    glutInitWindowSize(703, 980);
-    glutCreateWindow("Quadrilaterals");
+    glutInitWindowSize(485, 662);
+    glutCreateWindow("Project 4 Rendering");
 
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
