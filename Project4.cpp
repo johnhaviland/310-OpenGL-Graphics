@@ -79,7 +79,8 @@ void display() {
     glEnd();
 
     // #7
-    glBegin(GL_LINE_LOOP);
+    glBegin(GL_POLYGON);
+    glColor3f(0.5,0.5,0.5);
     glVertex2f(427, 611);     // Bottom-left vertex
     glVertex2f(485, 643);     // Bottom-right vertex
     glVertex2f(485, 73);     // Top-right vertex
@@ -88,7 +89,7 @@ void display() {
 
     // #8
     glBegin(GL_POLYGON);
-    glColor3f(0.8, 0.8, 0.8); // Light gray color
+    glColor3f(1,0.9,0.8);
     glVertex2f(317, 195);
     glVertex2f(433, 217);
     glVertex2f(431, 94);
@@ -96,7 +97,8 @@ void display() {
     glEnd();
 
     // #9
-    glBegin(GL_LINE_LOOP);
+    glBegin(GL_POLYGON);
+    glColor3f(0.9,0.8,0.7);
     glVertex2f(335, 189);     // Bottom-left vertex
     glVertex2f(418, 203);     // Bottom-right vertex
     glVertex2f(418, 106);     // Top-right vertex
@@ -104,7 +106,8 @@ void display() {
     glEnd();
 
     // #10
-    glBegin(GL_LINE_LOOP);
+    glBegin(GL_POLYGON);
+    glColor3f(0.7,0.7,0.7);
     glVertex2f(409, 203);     // Bottom-left vertex
     glVertex2f(418, 203);     // Bottom-right vertex
     glVertex2f(418, 106);     // Top-right vertex
@@ -112,7 +115,8 @@ void display() {
     glEnd();
 
     // #11
-    glBegin(GL_LINE_LOOP);
+    glBegin(GL_POLYGON);
+    glColor3f(0.7,0.7,0.7);
     glVertex2f(336, 95);     // Bottom-left vertex
     glVertex2f(410, 110);     // Bottom-right vertex
     glVertex2f(418, 106);     // Top-right vertex
@@ -120,7 +124,8 @@ void display() {
     glEnd();
 
     // #12
-    glBegin(GL_LINE_LOOP);
+    glBegin(GL_POLYGON);  // Use GL_POLYGON for filled shapes
+    glColor3f(0.8, 0.8, 0.8); // Light gray color
     glVertex2f(256, 546);     // Bottom-left vertex
     glVertex2f(307, 569);     // Bottom-right vertex
     glVertex2f(317, 195);     // Top-right vertex
@@ -128,7 +133,8 @@ void display() {
     glEnd();
 
     // #13
-    glBegin(GL_LINE_LOOP);
+    glBegin(GL_POLYGON);
+    glColor3f(0.9,0.8,0.7);
     glVertex2f(272, 221);     // Bottom-left vertex
     glVertex2f(317, 195);     // Bottom-right vertex
     glVertex2f(321, 69);     // Top-right vertex
@@ -136,7 +142,8 @@ void display() {
     glEnd();
 
     // #14
-    glBegin(GL_LINE_LOOP);
+    glBegin(GL_POLYGON);
+    glColor3f(0.9,0.8,0.7);
     glVertex2f(184, 194);     // Bottom-left vertex
     glVertex2f(276, 125);     // Bottom-right vertex
     glVertex2f(275, 104);     // Top-right vertex
@@ -144,7 +151,8 @@ void display() {
     glEnd();
 
     // #14.1 (shape under #14)
-    glBegin(GL_LINE_LOOP);
+    glBegin(GL_POLYGON);
+    glColor3f(0.8,0.7,0.6);
     glVertex2f(189, 199);     // Bottom-left vertex
     glVertex2f(276, 132);     // Bottom-right vertex
     glVertex2f(276, 125);     // Top-right vertex
@@ -152,7 +160,8 @@ void display() {
     glEnd();
 
     // #15
-    glBegin(GL_LINE_LOOP);
+    glBegin(GL_POLYGON);
+    glColor3f(0.7,0.7,0.7);
     glVertex2f(262, 606);     // Bottom-left vertex
     glVertex2f(304, 628);     // Bottom-right vertex
     glVertex2f(306, 569);     // Top-right vertex
@@ -160,7 +169,8 @@ void display() {
     glEnd();
 
     // #16
-    glBegin(GL_LINE_LOOP);
+    glBegin(GL_POLYGON);
+    glColor3f(0.6,0.6,0.6);
     glVertex2f(260, 620);     // Bottom-left vertex
     glVertex2f(304, 642);     // Bottom-right vertex
     glVertex2f(304, 628);     // Top-right vertex
@@ -168,7 +178,8 @@ void display() {
     glEnd();
 
     // #17
-    glBegin(GL_LINE_LOOP);
+    glBegin(GL_POLYGON);
+    glColor3f(0.6,0.6,0.6);
     glVertex2f(175, 623);     // Bottom-left vertex
     glVertex2f(262, 606);     // Bottom-right vertex
     glVertex2f(265, 539);     // Top-right vertex
@@ -176,7 +187,8 @@ void display() {
     glEnd();
 
     // #18
-    glBegin(GL_LINE_LOOP);
+    glBegin(GL_POLYGON);
+    glColor3f(0.5,0.5,0.5);
     glVertex2f(175, 637);     // Bottom-left vertex
     glVertex2f(260, 620);     // Bottom-right vertex
     glVertex2f(262, 606);     // Top-right vertex
@@ -185,7 +197,8 @@ void display() {
     
 
     // #19
-    glBegin(GL_LINE_LOOP);
+    glBegin(GL_POLYGON);
+    glColor3f(0.7,0.7,0.7);
     glVertex2f(54, 615);     // Bottom-left vertex
     glVertex2f(175, 624);     // Bottom-right vertex
     glVertex2f(180, 553);     // Top-right vertex
@@ -194,7 +207,8 @@ void display() {
     
 
     // #20
-    glBegin(GL_LINE_LOOP);
+    glBegin(GL_POLYGON);
+    glColor3f(0.6,0.6,0.6);
     glVertex2f(52, 628);     // Bottom-left vertex
     glVertex2f(175, 637);     // Bottom-right vertex
     glVertex2f(175, 624);     // Top-right vertex
