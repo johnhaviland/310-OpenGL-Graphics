@@ -1,8 +1,11 @@
 # 310Project
 
 Run code in Linux with the following command lines:
-  >  g++ -o p4 Project4.cpp -lglut -lGL -lGLU
+  >   g++ Project4.cpp -o Project4 -lGL -lGLU -lglut -lSOIL
+  > ./Project4
 
-  > ./p4
-
-Make sure the file is saved as "Project4.cpp" in your Linux repository.
+Make sure you have the following files saved to your Linux repository:
+  - Project4.cpp
+  - vertexShader.vs
+  - fragmentShader.fs
+  - drywall.jpeg
