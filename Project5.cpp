@@ -1074,7 +1074,7 @@ void display() {
     glDisable(GL_BLEND);
 
     glutSwapBuffers();
-
+}
 
 void reshape(int width, int height) {
     glViewport(0, 0, width, height);
