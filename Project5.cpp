@@ -5,6 +5,7 @@
 #include <string>
 
 GLuint textureID; // Texture ID
+GLuint textureID2; // Texture ID for the second texture
 GLuint shaderProgram;
 
 const char* vertexShaderSource = R"(
@@ -29,6 +30,21 @@ void loadTexture() {
 
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+    SOIL_free_image_data(image);
+}
+
+void loadTexture2() {
+    int width, height;
+    unsigned char* image = SOIL_load_image("gravel.png", &width, &height, 0, SOIL_LOAD_RGBA);
+
+    glGenTextures(1, &textureID2);
+    glBindTexture(GL_TEXTURE_2D, textureID2);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -83,7 +99,40 @@ void display() {
 
     // Set the outline color to black
     glColor3f(0.0, 0.0, 0.0);
-  
+    
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, textureID2);
+
+    // Enable blending for transparent textures
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // Use the texture shader
+    glUseProgram(shaderProgram);
+
+    GLint textureUniform = glGetUniformLocation(shaderProgram, "texture");
+    glUniform1i(textureUniform, 0);
+
+    GLint opacityUniform = glGetUniformLocation(shaderProgram, "opacity");
+    glUniform1f(opacityUniform, 0.5);
+    
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f); glVertex2f(0.0f, 485.0f);
+    glTexCoord2f(1.0f, 0.0f); glVertex2f(485.0f, 485.0f);
+    glTexCoord2f(1.0f, 1.0f); glVertex2f(485.0f, 662.0f);
+    glTexCoord2f(0.0f, 1.0f); glVertex2f(0.0f, 662.0f);
+    glEnd();
+
+
+    // Reset to default shader and disable texturing
+    glUseProgram(0);
+    glDisable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    // Disable blending
+    glDisable(GL_BLEND);
+
+    glutSwapBuffers();
 
     // #1
     glBegin(GL_POLYGON);  // Use GL_POLYGON for filled shapes
@@ -223,6 +272,7 @@ void display() {
     glVertex2f(272, 221);     // Top-left vertex
     glEnd();
 
+
     // #13
     glBegin(GL_POLYGON);
     glColor3f(0.9,0.8,0.7);
@@ -232,6 +282,13 @@ void display() {
     glVertex2f(275, 104);     // Top-left vertex
     glEnd();
 
+
+
+	
+	
+    
+	
+	
     // #14
     glBegin(GL_POLYGON);
     glColor3f(0.9,0.8,0.7);
@@ -585,27 +642,20 @@ void display() {
     // Use the texture shader
     glUseProgram(shaderProgram);
 
-    GLint textureUniform = glGetUniformLocation(shaderProgram, "texture");
+    
     glUniform1i(textureUniform, 0);
 
-    GLint opacityUniform = glGetUniformLocation(shaderProgram, "opacity");
+    
     glUniform1f(opacityUniform, 0.5);
 
 
-    // #1
+// #1
+    
     glBegin(GL_QUADS);
     glTexCoord2f(0.0f, 0.0f); glVertex2f(307, 569);
     glTexCoord2f(1.0f, 0.0f); glVertex2f(428, 538);
     glTexCoord2f(1.0f, 1.0f); glVertex2f(433, 217);
     glTexCoord2f(0.0f, 1.0f); glVertex2f(317, 195);
-    glEnd();
-	
-	// #2
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f); glVertex2f(329, 446);
-    glTexCoord2f(1.0f, 0.0f); glVertex2f(421, 450);
-    glTexCoord2f(1.0f, 1.0f); glVertex2f(421, 329);
-    glTexCoord2f(0.0f, 1.0f); glVertex2f(331, 321);
     glEnd();
 
     // Reset to default shader and disable texturing
@@ -618,7 +668,7 @@ void display() {
 
     glutSwapBuffers();
 }
-// Function handles the reshaping of the window
+
 void reshape(int width, int height) {
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
@@ -627,15 +677,14 @@ void reshape(int width, int height) {
     glMatrixMode(GL_MODELVIEW);
 }
 
-// Initializes GLUT, GLEW, loads the texture, and sets up the shaders
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-    glutInitWindowSize(485, 662);
+    glutInitWindowSize(440, 662);
     glutCreateWindow("Project 4 Rendering");
 
     glewInit();
-
+    loadTexture2();
     loadTexture();
     setupShaders();
 
