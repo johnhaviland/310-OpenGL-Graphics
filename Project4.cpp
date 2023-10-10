@@ -1,21 +1,81 @@
+#include <GL/glew.h>
 #include <GL/glut.h>
+#include <SOIL/SOIL.h>
+#include <fstream>
+#include <string>
+
+GLuint textureID; // Texture ID
+GLuint shaderProgram;
+
+const char* vertexShaderSource = R"(
+    void main() {
+    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+    gl_TexCoord[0] = gl_MultiTexCoord0;
+    }
+)";
+
+const char* fragmentShaderSource = R"(
+    	uniform sampler2D texture;
+	uniform float opacity;
+
+	void main() {
+	    vec4 texColor = texture2D(texture, gl_TexCoord[0].st);
+	    gl_FragColor = mix(gl_Color, texColor, opacity); // Preserve original color
+}
+)";
+void loadTexture() {
+    int width, height;
+    unsigned char* image = SOIL_load_image("drywall.png", &width, &height, 0, SOIL_LOAD_RGBA);
+
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+    SOIL_free_image_data(image);
+}
+
+void setupShaders() {
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+
+    // Load vertex shader from file
+    std::ifstream vertexShaderFile("vertexShader.glsl");
+    std::string vertexShaderSource((std::istreambuf_iterator<char>(vertexShaderFile)),
+                                std::istreambuf_iterator<char>());
+    const char* vertexShaderSourceCStr = vertexShaderSource.c_str();
+    glShaderSource(vertexShader, 1, &vertexShaderSourceCStr, NULL);
+    glCompileShader(vertexShader);
+
+    // Load fragment shader from file
+    std::ifstream fragmentShaderFile("fragmentShader.glsl");
+    std::string fragmentShaderSource((std::istreambuf_iterator<char>(fragmentShaderFile)),
+                                  std::istreambuf_iterator<char>());
+    const char* fragmentShaderSourceCStr = fragmentShaderSource.c_str();
+    glShaderSource(fragmentShader, 1, &fragmentShaderSourceCStr, NULL);
+    glCompileShader(fragmentShader);
+
+    shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+}
 
 void display() {
-    // Set the clear color to sky blue (sky background)
     glClearColor(0.529f, 0.808f, 0.922f, 1.0f);
-
     glClear(GL_COLOR_BUFFER_BIT);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    // Translate the scene to the center
     glTranslatef(485 / 2, 662 / 2, 0.0f);
-
-    // Apply a 180-degree rotation around the Z-axis
     glRotatef(180.0f, 0.0f, 0.0f, 1.0f);
-
-    // Translate back to the original position
     glTranslatef(-485 / 2, -662 / 2, 0.0f);
 
     // Set the outline color to sky blue (TEST)
@@ -23,6 +83,7 @@ void display() {
 
     // Set the outline color to black
     glColor3f(0.0, 0.0, 0.0);
+  
 
     // #1
     glBegin(GL_POLYGON);  // Use GL_POLYGON for filled shapes
@@ -521,7 +582,39 @@ void display() {
     glVertex2f(429, 318);     // Top-left vertex
     glEnd();
 
-    glFlush();
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    // Enable blending for transparent textures
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // Use the texture shader
+    glUseProgram(shaderProgram);
+
+    GLint textureUniform = glGetUniformLocation(shaderProgram, "texture");
+    glUniform1i(textureUniform, 0);
+
+    GLint opacityUniform = glGetUniformLocation(shaderProgram, "opacity");
+    glUniform1f(opacityUniform, 0.5);
+
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f); glVertex2f(0.0f, 0.0f);
+    glTexCoord2f(1.0f, 0.0f); glVertex2f(485.0f, 0.0f);
+    glTexCoord2f(1.0f, 1.0f); glVertex2f(485.0f, 662.0f);
+    glTexCoord2f(0.0f, 1.0f); glVertex2f(0.0f, 662.0f);
+    glEnd();
+
+    // Reset to default shader and disable texturing
+    glUseProgram(0);
+    glDisable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    // Disable blending
+    glDisable(GL_BLEND);
+
+    glutSwapBuffers();
 }
 
 void reshape(int width, int height) {
@@ -534,9 +627,14 @@ void reshape(int width, int height) {
 
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
     glutInitWindowSize(485, 662);
     glutCreateWindow("Project 4 Rendering");
+
+    glewInit();
+
+    loadTexture();
+    setupShaders();
 
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
