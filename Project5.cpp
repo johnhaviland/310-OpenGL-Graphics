@@ -599,11 +599,14 @@ void display() {
     GLint opacityUniform = glGetUniformLocation(shaderProgram, "opacity");
     glUniform1f(opacityUniform, 0.5);
 
+
+// #1
+    
     glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f); glVertex2f(0.0f, 0.0f);
-    glTexCoord2f(1.0f, 0.0f); glVertex2f(485.0f, 0.0f);
-    glTexCoord2f(1.0f, 1.0f); glVertex2f(485.0f, 662.0f);
-    glTexCoord2f(0.0f, 1.0f); glVertex2f(0.0f, 662.0f);
+    glTexCoord2f(0.0f, 0.0f); glVertex2f(307, 569);
+    glTexCoord2f(1.0f, 0.0f); glVertex2f(428, 538);
+    glTexCoord2f(1.0f, 1.0f); glVertex2f(433, 217);
+    glTexCoord2f(0.0f, 1.0f); glVertex2f(317, 195);
     glEnd();
 
     // Reset to default shader and disable texturing
