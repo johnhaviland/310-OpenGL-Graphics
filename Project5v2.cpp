@@ -99,15 +99,6 @@ void display() {
 
     // Set the outline color to black
     glColor3f(0.0, 0.0, 0.0);
-
-    // #ground
-    glBegin(GL_POLYGON);  // Use GL_POLYGON for filled shapes
-    glColor3f(0.7, 0.7, 0.7); // Light gray color
-    glVertex2f(0.0f, 485.0f);
-    glVertex2f(485.0f, 485.0f);
-    glVertex2f(485.0f, 662.0f);
-    glVertex2f(0.0f, 662.0f);
-    glEnd();
     
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, textureID2);
@@ -116,20 +107,22 @@ void display() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    // Use the texture shader
     glUseProgram(shaderProgram);
 
-    GLint texture2Uniform = glGetUniformLocation(shaderProgram, "texture2");
-    glUniform1i(texture2Uniform, 0);
+    GLint textureUniform = glGetUniformLocation(shaderProgram, "texture");
+    glUniform1i(textureUniform, 0);
 
-    GLint opacity2Uniform = glGetUniformLocation(shaderProgram, "opacity2");
-    glUniform1f(opacity2Uniform, 0.05); // Set the opacity value for texture 2 (adjust as needed)
+    GLint opacityUniform = glGetUniformLocation(shaderProgram, "opacity");
+    glUniform1f(opacityUniform, 0.5);
+    
+    // glBegin(GL_QUADS);
+    // glTexCoord2f(0.0f, 0.0f); glVertex2f(0.0f, 485.0f);
+    // glTexCoord2f(1.0f, 0.0f); glVertex2f(485.0f, 485.0f);
+    // glTexCoord2f(1.0f, 1.0f); glVertex2f(485.0f, 662.0f);
+    // glTexCoord2f(0.0f, 1.0f); glVertex2f(0.0f, 662.0f);
+    // glEnd();
 
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f); glVertex2f(0.0f, 485.0f);
-    glTexCoord2f(1.0f, 0.0f); glVertex2f(485.0f, 485.0f);
-    glTexCoord2f(1.0f, 1.0f); glVertex2f(485.0f, 662.0f);
-    glTexCoord2f(0.0f, 1.0f); glVertex2f(0.0f, 662.0f);
-    glEnd();
 
     // Reset to default shader and disable texturing
     glUseProgram(0);
@@ -545,15 +538,6 @@ void display() {
     glVertex2f(52, 332);     // Top-left vertex
     glEnd();
 
-    // #40.2
-    glBegin(GL_POLYGON);  
-    glColor3f(0.6,0.6,0.6);
-    glVertex2f(69, 378);     // Bottom-left vertex
-    glVertex2f(69, 378);     // Bottom-right vertex
-    glVertex2f(69, 368);     // Top-right vertex
-    glVertex2f(48, 377);     // Top-left vertex
-    glEnd();
-
     // #40.1 (connecting shape to #40)
     glBegin(GL_POLYGON);  
     glColor3f(0.8, 0.8, 0.8);
@@ -565,38 +549,11 @@ void display() {
 
     // #41
     glBegin(GL_POLYGON);
-    glColor3f(0.6,0.5,0.4);
+    glColor3f(0.8,0.7,0.6);
     glVertex2f(92, 302);     // Bottom-left vertex
     glVertex2f(132, 306);     // Bottom-right vertex
     glVertex2f(140, 213);     // Top-right vertex
     glVertex2f(96, 245);     // Top-left vertex
-    glEnd();
-    
-    // #41.1
-    glBegin(GL_POLYGON);
-    glColor3f(0.7,0.6,0.5);
-    glVertex2f(102, 246);     // Bottom-left vertex
-    glVertex2f(140, 219);     // Bottom-right vertex
-    glVertex2f(139, 213);     // Top-right vertex
-    glVertex2f(96, 243);     // Top-left vertex
-    glEnd();
-    
-    // #41.2
-    glBegin(GL_POLYGON);
-    glColor3f(0.7,0.6,0.5);
-    glVertex2f(92, 300);     // Bottom-left vertex
-    glVertex2f(97, 301);     // Bottom-right vertex
-    glVertex2f(102, 246);     // Top-right vertex
-    glVertex2f(96, 243);     // Top-left vertex
-    glEnd();
-    
-    // #41.3
-    glBegin(GL_POLYGON);
-    glColor3f(0.5,0.4,0.3);
-    glVertex2f(122, 253);     // Bottom-left vertex
-    glVertex2f(137, 235);     // Bottom-right vertex
-    glVertex2f(140, 219);     // Top-right vertex
-    glVertex2f(102, 246);     // Top-left vertex
     glEnd();
 
     // #42
@@ -663,11 +620,9 @@ void display() {
     // Use the texture shader
     glUseProgram(shaderProgram);
 
-    GLint textureUniform = glGetUniformLocation(shaderProgram, "texture");
     glUniform1i(textureUniform, 0);
-    
-    GLint opacityUniform = glGetUniformLocation(shaderProgram, "opacity");
     glUniform1f(opacityUniform, 0.5);
+
 
 	// #1
     glBegin(GL_QUADS);
@@ -1040,14 +995,6 @@ void display() {
     glTexCoord2f(0.0f, 1.0f); glVertex2f(52, 332);     // Top-left vertex
     glEnd();
 
-    // #40.2
-    glBegin(GL_QUADS);  
-    glTexCoord2f(0.0f, 0.0f); glVertex2f(69, 378);     // Bottom-left vertex
-    glTexCoord2f(1.0f, 0.0f); glVertex2f(69, 378);     // Bottom-right vertex
-    glTexCoord2f(1.0f, 1.0f); glVertex2f(69, 368);     // Top-right vertex
-    glTexCoord2f(0.0f, 1.0f); glVertex2f(48, 377);     // Top-left vertex
-    glEnd();
-
     // #40.1 (connecting shape to #40)
     glBegin(GL_QUADS);  
     glTexCoord2f(0.0f, 0.0f); glVertex2f(62, 452);     // Bottom-left vertex
@@ -1062,22 +1009,6 @@ void display() {
     glTexCoord2f(1.0f, 0.0f); glVertex2f(132, 306);     // Bottom-right vertex
     glTexCoord2f(1.0f, 1.0f); glVertex2f(140, 213);     // Top-right vertex
     glTexCoord2f(0.0f, 1.0f); glVertex2f(96, 245);     // Top-left vertex
-    glEnd();
-    
-    // #41.1
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f); glVertex2f(102, 246);     // Bottom-left vertex
-    glTexCoord2f(1.0f, 0.0f); glVertex2f(140, 219);     // Bottom-right vertex
-    glTexCoord2f(1.0f, 1.0f); glVertex2f(139, 213);     // Top-right vertex
-    glTexCoord2f(0.0f, 1.0f); glVertex2f(96, 243);     // Top-left vertex
-    glEnd();
-    
-    // #41.2
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f); glVertex2f(92, 300);     // Bottom-left vertex
-    glTexCoord2f(1.0f, 0.0f); glVertex2f(97, 301);     // Bottom-right vertex
-    glTexCoord2f(1.0f, 1.0f); glVertex2f(102, 246);     // Top-right vertex
-    glTexCoord2f(0.0f, 1.0f); glVertex2f(96, 243);     // Top-left vertex
     glEnd();
 
     // #42
@@ -1098,71 +1029,4 @@ void display() {
 
     // #42.2 (connecting right shape to #42)
     glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f); glVertex2f(134, 282);     // Bottom-left vertex
-    glTexCoord2f(1.0f, 0.0f); glVertex2f(148, 274);     // Bottom-right vertex
-    glTexCoord2f(1.0f, 1.0f); glVertex2f(156, 160);     // Top-right vertex
-    glTexCoord2f(0.0f, 1.0f); glVertex2f(140, 213);     // Top-left vertex
-    glEnd();
-
-    // #44
-    glBegin(GL_TRIANGLES);
-    glTexCoord2f(0.0f, 0.0f); glVertex2f(258, 215);     // left vertex
-    glTexCoord2f(1.0f, 0.0f); glVertex2f(274, 198);     // right vertex  
-    glTexCoord2f(1.0f, 1.0f); glVertex2f(272, 221);
-    glEnd();
-
-    // #45
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f); glVertex2f(431, 345);     // Bottom-left vertex
-    glTexCoord2f(1.0f, 0.0f); glVertex2f(485, 337);     // Bottom-right vertex
-    glTexCoord2f(1.0f, 1.0f); glVertex2f(485, 323);     // Top-right vertex
-    glTexCoord2f(0.0f, 1.0f); glVertex2f(431, 332);     // Top-left vertex
-    glEnd();
-
-    // #46
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f); glVertex2f(430, 325);     // Bottom-left vertex
-    glTexCoord2f(1.0f, 0.0f); glVertex2f(485, 315);     // Bottom-right vertex
-    glTexCoord2f(1.0f, 1.0f); glVertex2f(485, 308);     // Top-right vertex
-    glTexCoord2f(0.0f, 1.0f); glVertex2f(429, 318);     // Top-left vertex
-    glEnd();
-
-    
-    // Reset to default shader and disable texturing
-    glUseProgram(0);
-    glDisable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    // Disable blending
-    glDisable(GL_BLEND);
-
-    glutSwapBuffers();
-
-}
-
-void reshape(int width, int height) {
-    glViewport(0, 0, width, height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(0, width, 0, height);
-    glMatrixMode(GL_MODELVIEW);
-}
-
-int main(int argc, char** argv) {
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-    glutInitWindowSize(440, 662);
-    glutCreateWindow("Project 5 Rendering");
-
-    glewInit();
-    loadTexture2();
-    loadTexture();
-    setupShaders();
-
-    glutDisplayFunc(display);
-    glutReshapeFunc(reshape);
-
-    glutMainLoop();
-
-    return 0;
-}
+    glTexCoord2
