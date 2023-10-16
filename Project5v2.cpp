@@ -99,6 +99,15 @@ void display() {
 
     // Set the outline color to black
     glColor3f(0.0, 0.0, 0.0);
+
+    // #ground
+    glBegin(GL_POLYGON);  // Use GL_POLYGON for filled shapes
+    glColor3f(0.7, 0.7, 0.7); // Light gray color
+    glVertex2f(0.0f, 485.0f);
+    glVertex2f(485.0f, 485.0f);
+    glVertex2f(485.0f, 662.0f);
+    glVertex2f(0.0f, 662.0f);
+    glEnd();
     
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, textureID2);
@@ -107,22 +116,20 @@ void display() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // Use the texture shader
     glUseProgram(shaderProgram);
 
-    GLint textureUniform = glGetUniformLocation(shaderProgram, "texture");
-    glUniform1i(textureUniform, 0);
+    GLint texture2Uniform = glGetUniformLocation(shaderProgram, "texture2");
+    glUniform1i(texture2Uniform, 0);
 
-    GLint opacityUniform = glGetUniformLocation(shaderProgram, "opacity");
-    glUniform1f(opacityUniform, 0.5);
-    
-    // glBegin(GL_QUADS);
-    // glTexCoord2f(0.0f, 0.0f); glVertex2f(0.0f, 485.0f);
-    // glTexCoord2f(1.0f, 0.0f); glVertex2f(485.0f, 485.0f);
-    // glTexCoord2f(1.0f, 1.0f); glVertex2f(485.0f, 662.0f);
-    // glTexCoord2f(0.0f, 1.0f); glVertex2f(0.0f, 662.0f);
-    // glEnd();
+    GLint opacity2Uniform = glGetUniformLocation(shaderProgram, "opacity2");
+    glUniform1f(opacity2Uniform, 0.05); // Set the opacity value for texture 2 (adjust as needed)
 
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f); glVertex2f(0.0f, 485.0f);
+    glTexCoord2f(1.0f, 0.0f); glVertex2f(485.0f, 485.0f);
+    glTexCoord2f(1.0f, 1.0f); glVertex2f(485.0f, 662.0f);
+    glTexCoord2f(0.0f, 1.0f); glVertex2f(0.0f, 662.0f);
+    glEnd();
 
     // Reset to default shader and disable texturing
     glUseProgram(0);
@@ -656,9 +663,11 @@ void display() {
     // Use the texture shader
     glUseProgram(shaderProgram);
 
+    GLint textureUniform = glGetUniformLocation(shaderProgram, "texture");
     glUniform1i(textureUniform, 0);
+    
+    GLint opacityUniform = glGetUniformLocation(shaderProgram, "opacity");
     glUniform1f(opacityUniform, 0.5);
-
 
 	// #1
     glBegin(GL_QUADS);
