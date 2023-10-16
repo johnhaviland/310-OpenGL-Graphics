@@ -237,8 +237,8 @@ void display() {
     glBegin(GL_POLYGON);
     glColor3f(0.7,0.6,0.5);    
     glVertex2f(148, 275);	// Bottom-left vertex
-    glVertex2f(211, 235);     // bottom right vertex
-    glVertex2f(197, 167);     // top right vertex
+    glVertex2f(196, 244);     // bottom right vertex
+    glVertex2f(195, 167);     // top right vertex
     glVertex2f(156, 160);	//top left vertex
     glEnd();
     
@@ -715,21 +715,28 @@ void display() {
     // #43.1 (side of 42 behind 14)-right side
     glBegin(GL_QUADS);
     glTexCoord2f(0.0f, 0.0f); glVertex2f(148, 275);
-    glTexCoord2f(1.0f, 0.0f); glVertex2f(211, 235);
+    glTexCoord2f(1.0f, 0.0f); glVertex2f(196, 244);
     glTexCoord2f(1.0f, 1.0f); glVertex2f(197, 167);
     glTexCoord2f(0.0f, 1.0f); glVertex2f(156, 160);
     glEnd();
 
-/*
+
     // ???
     // #43.2 (rest behind 14)-back
     glBegin(GL_QUADS);
     glTexCoord2f(0.0f, 0.0f); glVertex2f(196, 244); 	// Bottom-left vertex
-    glTexCoord2f(1.0f, 0.0f); glVertex2f(296, 284);     // bottom right vertex
+    glTexCoord2f(1.0f, 0.0f); glVertex2f(251, 210);    // bottom right vertex
     glTexCoord2f(1.0f, 1.0f); glVertex2f(275, 125);     // top right vertex
     glTexCoord2f(0.0f, 1.0f); glVertex2f(196, 191);     // top left vertex
     glEnd();
-*/
+
+    // #43.2 (rest behind 14)-backpt2
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f); glVertex2f(257, 211); 	// Bottom-left vertex
+    glTexCoord2f(1.0f, 0.0f);  glVertex2f(273, 198);   // bottom right vertex
+    glTexCoord2f(1.0f, 1.0f); glVertex2f(274, 133);     // top right vertex
+    glTexCoord2f(0.0f, 1.0f); glVertex2f(250, 209);   // top left vertex
+    glEnd();
 
     // #43.2(rest behind 14)-roof
     glBegin(GL_QUADS);
