@@ -12,7 +12,9 @@ struct Mesh {
     std::vector<unsigned int> indices;
 };
 
-void renderMesh(const Mesh& mesh, unsigned int VAO, unsigned int VBO, unsigned int EBO) {
+float lightIntensity = 1.0f; // Initial light intensity
+
+void renderMesh(const Mesh& mesh, unsigned int VAO, unsigned int VBO, unsigned int EBO, float intensity) {
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -66,12 +68,12 @@ const char* fragmentShaderSource = R"(
 
     void main()
     {
-        vec3 ambient = 0.2 * lightColor;
+        vec3 ambient = 0.2 * lightColor * 0.5; // Apply light intensity here
 
         vec3 norm = normalize(Normal);
         vec3 lightDir = normalize(lightPos - FragPos);
         float diff = max(dot(norm, lightDir), 0.0);
-        vec3 diffuse = diff * lightColor;
+        vec3 diffuse = diff * lightColor * 0.5; // Apply light intensity here
 
         vec3 viewDir = normalize(viewPos - FragPos);
         vec3 reflectDir = reflect(-lightDir, norm);
@@ -84,42 +86,68 @@ const char* fragmentShaderSource = R"(
     }
 )";
 
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if (action == GLFW_PRESS) {
+        switch (key) {
+            case GLFW_KEY_1:
+                lightIntensity = 2.0f;
+                break;
+            case GLFW_KEY_2:
+                lightIntensity = 4.0f;
+                break;
+            case GLFW_KEY_3:
+                lightIntensity = 8.0f;
+                break;
+            case GLFW_KEY_4:
+                lightIntensity = 16.0f;
+                break;
+            case GLFW_KEY_5:
+                lightIntensity = 32.0f;
+                break;
+            case GLFW_KEY_6:
+                lightIntensity = 64.0f;
+                break;
+            case GLFW_KEY_7:
+                lightIntensity = 128.0f;
+                break;
+            case GLFW_KEY_8:
+                lightIntensity = 256.0f;
+                break;
+        }
+    }
+}
+
 int main() {
     // Initialize GLFW and GLEW
     if (!glfwInit()) return -1;
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
-    // Create eight windows
-    GLFWwindow* windows[8];
-    unsigned int shaderPrograms[8];
-
-    for (int i = 0; i < 8; i++) {
-        windows[i] = glfwCreateWindow(800, 600, "Mesh Renderer", NULL, NULL);
-        if (!windows[i]) {
-            glfwTerminate();
-            return -1;
-        }
-        glfwMakeContextCurrent(windows[i]);
-
-        if (glewInit() != GLEW_OK) return -1;
-
-        unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-        glCompileShader(vertexShader);
-
-        unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-        glCompileShader(fragmentShader);
-
-        shaderPrograms[i] = glCreateProgram();
-        glAttachShader(shaderPrograms[i], vertexShader);
-        glAttachShader(shaderPrograms[i], fragmentShader);
-        glLinkProgram(shaderPrograms[i]);
-
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShader);
+    // Create a window
+    GLFWwindow* window = glfwCreateWindow(800, 600, "Mesh Renderer", NULL, NULL);
+    if (!window) {
+        glfwTerminate();
+        return -1;
     }
+    glfwMakeContextCurrent(window);
+
+    if (glewInit() != GLEW_OK) return -1;
+
+    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    glCompileShader(vertexShader);
+
+    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
+
+    unsigned int shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
 
     // Set up cube vertices and indices
     float vertices[] = {
@@ -162,6 +190,9 @@ int main() {
     glm::vec3 viewPos(0.0f, 0.0f, 3.0f);
 
     int modelLoc, viewLoc, projectionLoc, lightPosLoc, viewPosLoc, objectColorLoc, lightColorLoc;
+
+    glfwSetKeyCallback(window, key_callback); // Register key callback
+
     Mesh myMesh;
     myMesh.vertices = {
         glm::vec3(0.5f, 0.5f, 0.0f),
@@ -180,43 +211,36 @@ int main() {
         1, 2, 3
     };
 
-    while (!glfwWindowShouldClose(windows[0])) {
-        for (int i = 0; i < 8; i++) {
-            glfwMakeContextCurrent(windows[i]);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    while (!glfwWindowShouldClose(window)) {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            glUseProgram(shaderPrograms[i]);
+        glUseProgram(shaderProgram);
 
-            glm::mat4 model = glm::mat4(1.0f);
-            glm::mat4 view = glm::lookAt(viewPos, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-            glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+        glm::mat4 model = glm::mat4(1.0f);
+        glm::mat4 view = glm::lookAt(viewPos, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
-            modelLoc = glGetUniformLocation(shaderPrograms[i], "model");
-            viewLoc = glGetUniformLocation(shaderPrograms[i], "view");
-            projectionLoc = glGetUniformLocation(shaderPrograms[i], "projection");
-            lightPosLoc = glGetUniformLocation(shaderPrograms[i], "lightPos");
-            viewPosLoc = glGetUniformLocation(shaderPrograms[i], "viewPos");
-            objectColorLoc = glGetUniformLocation(shaderPrograms[i], "objectColor");
-            lightColorLoc = glGetUniformLocation(shaderPrograms[i], "lightColor");
+        modelLoc = glGetUniformLocation(shaderProgram, "model");
+        viewLoc = glGetUniformLocation(shaderProgram, "view");
+        projectionLoc = glGetUniformLocation(shaderProgram, "projection");
+        lightPosLoc = glGetUniformLocation(shaderProgram, "lightPos");
+        viewPosLoc = glGetUniformLocation(shaderProgram, "viewPos");
+        objectColorLoc = glGetUniformLocation(shaderProgram, "objectColor");
+        lightColorLoc = glGetUniformLocation(shaderProgram, "lightColor");
 
-            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-            glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-            glUniform3fv(lightPosLoc, 1, glm::value_ptr(lightPos));
-            glUniform3fv(viewPosLoc, 1, glm::value_ptr(viewPos));
-            glUniform3fv(objectColorLoc, 1, glm::value_ptr(objectColor));
-            glUniform3fv(lightColorLoc, 1, glm::value_ptr(lightColor));
+        glUniform3fv(lightPosLoc, 1, glm::value_ptr(lightPos));
+        glUniform3fv(viewPosLoc, 1, glm::value_ptr(viewPos));
+        glUniform3fv(objectColorLoc, 1, glm::value_ptr(objectColor));
+        glUniform3fv(lightColorLoc, 1, glm::value_ptr(lightColor));
 
-            renderMesh(myMesh, VAO, VBO, EBO);
+        renderMesh(myMesh, VAO, VBO, EBO, lightIntensity);
 
-            glfwSwapBuffers(windows[i]);
-            glfwPollEvents();
-        }
-    }
-
-    for (int i = 0; i < 8; i++) {
-        glfwDestroyWindow(windows[i]);
+        glfwSwapBuffers(window);
+        glfwPollEvents();
     }
 
     glfwTerminate();
