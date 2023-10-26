@@ -12,7 +12,7 @@ struct Mesh {
     std::vector<unsigned int> indices;
 };
 
-float lightIntensity = 1.0f; // Initial light intensity
+float lightIntensity = 0.5f; // Initial light intensity
 
 void renderMesh(const Mesh& mesh, unsigned int VAO, unsigned int VBO, unsigned int EBO, float intensity) {
     glBindVertexArray(VAO);
@@ -65,15 +65,16 @@ const char* fragmentShaderSource = R"(
     uniform vec3 viewPos;
     uniform vec3 objectColor;
     uniform vec3 lightColor;
+    uniform float lightIntensity; // Added uniform for light intensity
 
     void main()
     {
-        vec3 ambient = 0.2 * lightColor * 0.5; // Apply light intensity here
+        vec3 ambient = 0.2 * lightColor * 0.5 * lightIntensity; // Apply light intensity here
 
         vec3 norm = normalize(Normal);
         vec3 lightDir = normalize(lightPos - FragPos);
         float diff = max(dot(norm, lightDir), 0.0);
-        vec3 diffuse = diff * lightColor * 0.5; // Apply light intensity here
+        vec3 diffuse = diff * lightColor * 0.5 * lightIntensity; // Apply light intensity here
 
         vec3 viewDir = normalize(viewPos - FragPos);
         vec3 reflectDir = reflect(-lightDir, norm);
@@ -90,28 +91,28 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if (action == GLFW_PRESS) {
         switch (key) {
             case GLFW_KEY_1:
-                lightIntensity = 2.0f;
+                lightIntensity = 0.5f;
                 break;
             case GLFW_KEY_2:
-                lightIntensity = 4.0f;
+                lightIntensity = 1.0f;
                 break;
             case GLFW_KEY_3:
-                lightIntensity = 8.0f;
+                lightIntensity = 2.0f;
                 break;
             case GLFW_KEY_4:
-                lightIntensity = 16.0f;
+                lightIntensity = 4.0f;
                 break;
             case GLFW_KEY_5:
-                lightIntensity = 32.0f;
+                lightIntensity = 8.0f;
                 break;
             case GLFW_KEY_6:
-                lightIntensity = 64.0f;
+                lightIntensity = 10.0f;
                 break;
             case GLFW_KEY_7:
-                lightIntensity = 128.0f;
+                lightIntensity = 20.0f;
                 break;
             case GLFW_KEY_8:
-                lightIntensity = 256.0f;
+                lightIntensity = 25.0f;
                 break;
         }
     }
@@ -124,7 +125,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
     // Create a window
-    GLFWwindow* window = glfwCreateWindow(800, 600, "Mesh Renderer", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(800, 600, "Specular Lighting", NULL, NULL);
     if (!window) {
         glfwTerminate();
         return -1;
@@ -189,7 +190,7 @@ int main() {
     glm::vec3 objectColor(1.0f, 0.5f, 0.31f);
     glm::vec3 viewPos(0.0f, 0.0f, 3.0f);
 
-    int modelLoc, viewLoc, projectionLoc, lightPosLoc, viewPosLoc, objectColorLoc, lightColorLoc;
+    int modelLoc, viewLoc, projectionLoc, lightPosLoc, viewPosLoc, objectColorLoc, lightColorLoc, lightIntensityLoc;
 
     glfwSetKeyCallback(window, key_callback); // Register key callback
 
@@ -227,6 +228,7 @@ int main() {
         viewPosLoc = glGetUniformLocation(shaderProgram, "viewPos");
         objectColorLoc = glGetUniformLocation(shaderProgram, "objectColor");
         lightColorLoc = glGetUniformLocation(shaderProgram, "lightColor");
+        lightIntensityLoc = glGetUniformLocation(shaderProgram, "lightIntensity");
 
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
@@ -236,6 +238,9 @@ int main() {
         glUniform3fv(viewPosLoc, 1, glm::value_ptr(viewPos));
         glUniform3fv(objectColorLoc, 1, glm::value_ptr(objectColor));
         glUniform3fv(lightColorLoc, 1, glm::value_ptr(lightColor));
+
+        // Set the updated light intensity in the fragment shader
+        glUniform1f(lightIntensityLoc, lightIntensity);
 
         renderMesh(myMesh, VAO, VBO, EBO, lightIntensity);
 
