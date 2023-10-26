@@ -12,7 +12,7 @@ struct Mesh {
     std::vector<unsigned int> indices;
 };
 
-float lightIntensity = 0.5f; // Initial light intensity
+float lightIntensity = 1.0f; // Initial light intensity
 
 void renderMesh(const Mesh& mesh, unsigned int VAO, unsigned int VBO, unsigned int EBO, float intensity) {
     glBindVertexArray(VAO);
@@ -91,28 +91,28 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if (action == GLFW_PRESS) {
         switch (key) {
             case GLFW_KEY_1:
-                lightIntensity = 0.5f;
-                break;
-            case GLFW_KEY_2:
                 lightIntensity = 1.0f;
                 break;
-            case GLFW_KEY_3:
+            case GLFW_KEY_2:
                 lightIntensity = 2.0f;
+                break;
+            case GLFW_KEY_3:
+                lightIntensity = 3.0f;
                 break;
             case GLFW_KEY_4:
                 lightIntensity = 4.0f;
                 break;
             case GLFW_KEY_5:
-                lightIntensity = 8.0f;
+                lightIntensity = 5.0f;
                 break;
             case GLFW_KEY_6:
-                lightIntensity = 10.0f;
+                lightIntensity = 6.0f;
                 break;
             case GLFW_KEY_7:
-                lightIntensity = 20.0f;
+                lightIntensity = 7.0f;
                 break;
             case GLFW_KEY_8:
-                lightIntensity = 25.0f;
+                lightIntensity = 8.0f;
                 break;
         }
     }
@@ -185,10 +185,11 @@ int main() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+    //glm::vec3 lightPos(2.0f, 1.0f, 1.0f);
     glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
     glm::vec3 objectColor(1.0f, 0.5f, 0.31f);
     glm::vec3 viewPos(0.0f, 0.0f, 3.0f);
+    glm::vec3 lightPos(0.0f, 0.0f, -0.5f);
 
     int modelLoc, viewLoc, projectionLoc, lightPosLoc, viewPosLoc, objectColorLoc, lightColorLoc, lightIntensityLoc;
 
