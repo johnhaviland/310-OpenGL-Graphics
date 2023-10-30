@@ -69,21 +69,21 @@ const char* fragmentShaderSource = R"(
 
 	void main()
 	{
-    	vec3 ambient = 0.2 * lightColor * 0.5 * lightIntensity; // Apply light intensity here
+	    vec3 ambient = 0.2 * lightColor * 0.5 * lightIntensity; // Apply light intensity here
 
-    	vec3 norm = normalize(Normal);
-    	vec3 lightDir = normalize(lightPos - FragPos);
-    	float diff = max(dot(norm, lightDir), 0.0);
-    	vec3 diffuse = diff * lightColor * 0.5 * lightIntensity; // Apply light intensity here
+	    vec3 norm = normalize(Normal);
+	    vec3 lightDir = normalize(lightPos - FragPos); // Compute the light direction here
+	    float diff = max(dot(norm, lightDir), 0.0);
+	    vec3 diffuse = diff * lightColor * 0.5 * lightIntensity; // Apply light intensity here
 
-    	vec3 viewDir = normalize(viewPos - FragPos);
-    	vec3 reflectDir = reflect(-lightDir, norm);
-    	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-    	vec3 specular = spec * lightColor;
+	    vec3 viewDir = normalize(viewPos - FragPos);
+	    vec3 reflectDir = reflect(-lightDir, norm);
+	    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+	    vec3 specular = spec * lightColor;
 
-    	vec3 result = (ambient + diffuse + specular) * objectColor;
+	    vec3 result = (ambient + diffuse + specular) * objectColor;
 
-    	FragColor = vec4(result, 1.0);
+	    FragColor = vec4(result, 1.0);
 	}
 )";
 
@@ -94,25 +94,25 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             	lightIntensity = 1.0f;
             	break;
         	case GLFW_KEY_2:
-            	lightIntensity = 2.0f;
+            	lightIntensity = 1.25f;
             	break;
         	case GLFW_KEY_3:
-            	lightIntensity = 3.0f;
+            	lightIntensity = 1.5f;
             	break;
         	case GLFW_KEY_4:
-            	lightIntensity = 4.0f;
+            	lightIntensity = 1.75f;
             	break;
         	case GLFW_KEY_5:
-            	lightIntensity = 5.0f;
+            	lightIntensity = 2.0f;
             	break;
         	case GLFW_KEY_6:
-            	lightIntensity = 6.0f;
+            	lightIntensity = 2.25f;
             	break;
         	case GLFW_KEY_7:
-            	lightIntensity = 7.0f;
+            	lightIntensity = 2.5f;
             	break;
         	case GLFW_KEY_8:
-            	lightIntensity = 8.0f;
+            	lightIntensity = 3.0f;
             	break;
     	}
 	}
@@ -133,6 +133,8 @@ int main() {
 	glfwMakeContextCurrent(window);
 
 	if (glewInit() != GLEW_OK) return -1;
+
+	glEnable(GL_DEPTH_TEST);
 
 	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
@@ -188,8 +190,8 @@ int main() {
 	//glm::vec3 lightPos(2.0f, 1.0f, 1.0f);
 	glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
 	glm::vec3 objectColor(1.0f, 0.5f, 0.31f);
-	glm::vec3 viewPos(2.0f, 0.0f, 3.0f);
-	glm::vec3 lightPos(0.0f, 0.0f, -0.5f);
+	glm::vec3 viewPos(0.0f, 0.0f, 3.0f);  // Adjusted to view the front face directly
+	glm::vec3 lightPos(0.0f, 0.0f, 2.0f); // Positioned closer to the front face
 
 	int modelLoc, viewLoc, projectionLoc, lightPosLoc, viewPosLoc, objectColorLoc, lightColorLoc, lightIntensityLoc;
 
@@ -253,46 +255,47 @@ int main() {
 	    1, 0, 4,
 	};
 
-	
-
-
-
 
 	while (!glfwWindowShouldClose(window)) {
-    	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    	glUseProgram(shaderProgram);
+	    glUseProgram(shaderProgram);
 
-    	glm::mat4 model = glm::mat4(1.0f);
-    	glm::mat4 view = glm::lookAt(viewPos, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    	glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+	    glm::mat4 model = glm::mat4(1.0f);
+	    model = glm::rotate(model, glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f)); // Rotate 30 degrees around the X axis
+	    model = glm::rotate(model, glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate 30 degrees around the Y axis
 
-    	modelLoc = glGetUniformLocation(shaderProgram, "model");
-    	viewLoc = glGetUniformLocation(shaderProgram, "view");
-    	projectionLoc = glGetUniformLocation(shaderProgram, "projection");
-    	lightPosLoc = glGetUniformLocation(shaderProgram, "lightPos");
-    	viewPosLoc = glGetUniformLocation(shaderProgram, "viewPos");
-    	objectColorLoc = glGetUniformLocation(shaderProgram, "objectColor");
-    	lightColorLoc = glGetUniformLocation(shaderProgram, "lightColor");
-    	lightIntensityLoc = glGetUniformLocation(shaderProgram, "lightIntensity");
+	    glm::vec4 frontFaceOriginLocal = glm::vec4(0.0f, 0.0f, 0.5f, 1.0f);
+	    glm::vec3 frontFaceOriginWorld = glm::vec3(model * frontFaceOriginLocal);
 
-    	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-    	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-    	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+	    glm::mat4 view = glm::lookAt(viewPos, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
-    	glUniform3fv(lightPosLoc, 1, glm::value_ptr(lightPos));
-    	glUniform3fv(viewPosLoc, 1, glm::value_ptr(viewPos));
-    	glUniform3fv(objectColorLoc, 1, glm::value_ptr(objectColor));
-    	glUniform3fv(lightColorLoc, 1, glm::value_ptr(lightColor));
+	    modelLoc = glGetUniformLocation(shaderProgram, "model");
+	    viewLoc = glGetUniformLocation(shaderProgram, "view");
+	    projectionLoc = glGetUniformLocation(shaderProgram, "projection");
+	    lightPosLoc = glGetUniformLocation(shaderProgram, "lightPos");
+	    viewPosLoc = glGetUniformLocation(shaderProgram, "viewPos");
+	    objectColorLoc = glGetUniformLocation(shaderProgram, "objectColor");
+	    lightColorLoc = glGetUniformLocation(shaderProgram, "lightColor");
+	    lightIntensityLoc = glGetUniformLocation(shaderProgram, "lightIntensity");
 
-    	// Set the updated light intensity in the fragment shader
-    	glUniform1f(lightIntensityLoc, lightIntensity);
+	    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+	    glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+	    glUniform3fv(lightPosLoc, 1, glm::value_ptr(lightPos));
+	    glUniform3fv(viewPosLoc, 1, glm::value_ptr(viewPos));
+	    glUniform3fv(objectColorLoc, 1, glm::value_ptr(objectColor));
+	    glUniform3fv(lightColorLoc, 1, glm::value_ptr(lightColor));
+	    glUniform1f(lightIntensityLoc, lightIntensity);
 
-    	renderMesh(myMesh, VAO, VBO, EBO, lightIntensity);
+	    renderMesh(myMesh, VAO, VBO, EBO, lightIntensity);
 
-    	glfwSwapBuffers(window);
-    	glfwPollEvents();
-	}
+	    glfwSwapBuffers(window);
+	    glfwPollEvents();
+}
+
+	
 
 	glfwTerminate();
 
