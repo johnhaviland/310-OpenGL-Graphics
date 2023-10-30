@@ -1,3 +1,8 @@
+// John Haviland, Owen Kroeger, Anthony O'Neal
+// CST-310
+// Project 6: Specular Lighting, Objects, Illumination and Shaders
+// October 29, 2023
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -87,6 +92,8 @@ const char* fragmentShaderSource = R"(
 	}
 )";
 
+// void function that allows the user to change the light intensity with keys 1-8
+// '1' is the lowest light intensity, '8' is the highest
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if (action == GLFW_PRESS) {
     	switch (key) {
@@ -125,7 +132,7 @@ int main() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
 	// Create a window
-	GLFWwindow* window = glfwCreateWindow(800, 600, "Specular Lighting", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(800, 600, "Project 6: Specular Lighting, Objects, Illumination and Shaders", NULL, NULL);
 	if (!window) {
     	glfwTerminate();
     	return -1;
@@ -294,8 +301,6 @@ int main() {
 	    glfwSwapBuffers(window);
 	    glfwPollEvents();
 }
-
-	
 
 	glfwTerminate();
 
