@@ -15,7 +15,7 @@ GLubyte texture[][3] = {
     yellow, red,
 };
 
-// rotation & translation variables
+// Rotation and translation variables
 GLfloat angle = 0.0;
 GLfloat translationX = 0.0;
 GLfloat translationY = 0.0;
@@ -24,33 +24,53 @@ GLfloat zoom = 1.0;
 // spinning state
 bool spinning = true;
 
+// Timer function to spin the object continuously
+void rotateTimer(int value) {
+    if (spinning) {
+        angle += 1.0;
+        if (angle >= 360.0)
+            angle = 0.0;
+        glutPostRedisplay();
+        glutTimerFunc(10, rotateTimer, 0);
+    }
+}
+
 // Keyboard input handling
 void keyboard(unsigned char key, int x, int y) {
     switch (key) {
-        case 'p': // Stop spinning
+        case 'c':               // Start spinning
+            spinning = true;
+            rotateTimer(0);
+            break;
+        case 'p':               // Stop spinning
             spinning = false;
             break;
-        case 'c': // Start spinning
-            spinning = true;
+        case 'u':               // Move up
+            translationY += 0.1;
             break;
-        case 'u': // Move up
-            translationY += 0.25;
+        case 'd':               // Move down
+            translationY -= 0.1;
             break;
-        case 'd': // Move down
-            translationY -= 0.25;
+        case 'l':               // Move left
+            translationX -= 0.1;
             break;
-        case 'L': // Move left
-            translationX -= 0.25;
+        case 'r':               // Move right
+            translationX += 0.1;
             break;
-        case 'R': // Move right
-            translationX += 0.25;
+        case '+':               // Zoom in
+            zoom += 0.1;
             break;
-        case '+': // Zoom in
-            zoom += 0.25;
+        case '=':               // Zoom in
+            zoom += 0.1;
             break;
-        case '-': // Zoom out
-            zoom -= 0.25;
-            break;
+        case '-':               // Zoom out
+            if (zoom <= 0.1){
+                break;
+            }
+            else{
+                zoom -= 0.1;
+                break;
+            }
     }
     glutPostRedisplay();
 }
@@ -60,21 +80,26 @@ void reshape(int width, int height) {
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(80, GLfloat(width)/height, 1, 40);
+    gluPerspective(80, GLfloat(width) / height, 1, 40);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(2, -1, 5, 0, 0, 0, 0, 1, 0);
     glEnable(GL_TEXTURE_2D);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-    // level 0, use only RGB components, texture has 2x2 texels, no border, texels are in RGB format, color components are unsigned bytes
-    glTexImage2D(GL_TEXTURE_2D, 0, 3, 2, 2, 0, GL_RGB, GL_UNSIGNED_BYTE, texture);
+    glTexImage2D(GL_TEXTURE_2D,
+               0,                    // level 0
+               3,                    // use only R, G, and B components
+               2, 2,                 // texture has 2x2 texels
+               0,                    // no border
+               GL_RGB,               // texels are in RGB format
+               GL_UNSIGNED_BYTE,     // color components are unsigned bytes
+               texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 
-// Draws three textured triangles.  Each triangle uses the same texture,
-// but the mappings of texture coordinates to vertex coordinates is
+// Draws three textured triangles. Each triangle uses the same texture,
+// but the mappings of texture coordinates to vertex coordinates are
 // different in each triangle.
 void display() {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -85,30 +110,25 @@ void display() {
     glTranslatef(translationX, translationY, -5.0);
     glScalef(zoom, zoom, 1.0);
 
-    if (spinning) {
-        angle += 1.0;
-        if (angle >= 360.0)
-            angle = 0.0;
-    }
-    glRotatef(angle, 0.0, 1.0, 0.0);
+    glRotatef(angle, 0.0, 0.0, 1.0);    // spin about the z-axis
 
     glBegin(GL_TRIANGLES);
-        glTexCoord2f(0.5, 1.0);    glVertex2f(-3, 3);
-        glTexCoord2f(0.0, 0.0);    glVertex2f(-3, 0);
-        glTexCoord2f(1.0, 0.0);    glVertex2f(0, 0);
+    glTexCoord2f(0.5, 1.0);    glVertex2f(-3, 3);
+    glTexCoord2f(0.0, 0.0);    glVertex2f(-3, 0);
+    glTexCoord2f(1.0, 0.0);    glVertex2f(0, 0);
 
-        glTexCoord2f(4, 8);        glVertex2f(3, 3);
-        glTexCoord2f(0.0, 0.0);    glVertex2f(0, 0);
-        glTexCoord2f(8, 0.0);      glVertex2f(3, 0);
+    glTexCoord2f(4, 8);        glVertex2f(3, 3);
+    glTexCoord2f(0.0, 0.0);    glVertex2f(0, 0);
+    glTexCoord2f(8, 0.0);      glVertex2f(3, 0);
 
-        glTexCoord2f(5, 5);        glVertex2f(0, 0);
-        glTexCoord2f(0.0, 0.0);    glVertex2f(-1.5, -3);
-        glTexCoord2f(4, 0.0);      glVertex2f(1.5, -3);
+    glTexCoord2f(5, 5);        glVertex2f(0, 0);
+    glTexCoord2f(0.0, 0.0);    glVertex2f(-1.5, -3);
+    glTexCoord2f(4, 0.0);      glVertex2f(1.5, -3);
     glEnd();
     glFlush();
 }
 
-// Enters main loop, initialize glut
+// Enters the main loop, initialize glut
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
@@ -120,4 +140,3 @@ int main(int argc, char** argv) {
     glutMainLoop();
     return 0;
 }
-
