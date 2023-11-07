@@ -24,30 +24,32 @@ GLfloat vertexColors[NUM_VERTICES][3] = {
   {1.0, 0.0, 0.0}, {1.0, 0.0, 1.0}, {1.0, 1.0, 0.0}, {1.0, 1.0, 1.0}
 };
 
-void draw(GLfloat x, GLfloat y, GLfloat z) {
-  glPushMatrix();
-  glTranslatef(x, y, z);
+GLfloat lightPink[3] = {1.0f, 0.75f, 0.8f}; // RGB for light pink
 
+void draw(bool useLightPink = false) {
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
   glBegin(GL_QUADS);
   for (int i = 0; i < NUM_FACES; i++) {
     for (int j = 0; j < 4; j++) {
-      glColor3fv(vertexColors[faces[i][j]]);
+      if (useLightPink) {
+        // Blend the light pink color with the original vertex color
+        GLfloat blendedColor[3] = {
+          (lightPink[0] + vertexColors[faces[i][j]][0]) / 2,
+          (lightPink[1] + vertexColors[faces[i][j]][1]) / 2,
+          (lightPink[2] + vertexColors[faces[i][j]][2]) / 2
+        };
+        glColor3fv(blendedColor);
+      } else {
+        glColor3fv(vertexColors[faces[i][j]]);
+      }
       glVertex3fv(vertices[faces[i][j]]);
     }
   }
   glEnd();
   glDisable(GL_CULL_FACE);
-
-  glPopMatrix();
 }
 }
-
-// Global variables for cube positions and velocities
-GLfloat cubePositions[2][3] = {{0.0, 1.5, 0.0}, {0.0, 3.0, 0.0}};
-GLfloat cubeVelocities[2] = {0.05, -0.05};
-
 
 void drawBlueMeshPlanes() {
   float spacing = 5.0f;
@@ -71,13 +73,31 @@ void drawBlueMeshPlanes() {
   glEnd();
 }
 
+// Global variables for cube movement
+GLfloat cubePosition = 0.0f;
+GLfloat cubeDirection = 1.0f;
+
 void display() {
   glClear(GL_COLOR_BUFFER_BIT);
-  Cube::draw(0.0, 0.0, 0.0); // Draw the original cube
-  for (int i = 0; i < 2; ++i) {
-    Cube::draw(cubePositions[i][0], cubePositions[i][1], cubePositions[i][2]); // Draw the additional cubes
-  }
+  
+  // Draw the original cube with its original colors
+  Cube::draw();
+  
+  // Save the current transformation matrix
+  glPushMatrix();
+  // Move up by the cube's size plus a little extra
+  glTranslatef(cubePosition, 3.1, 0.0); // Use cubePosition for x-axis
+  // Draw the second cube with blended light pink color
+  Cube::draw(true);
+  // Move up by the cube's size plus a little extra again
+  glTranslatef(0.0, 3.1, 0.0);
+  // Draw the third cube with blended light pink color
+  Cube::draw(true);
+  // Restore the original transformation matrix
+  glPopMatrix();
+  
   drawBlueMeshPlanes();
+  
   glFlush();
   glutSwapBuffers();
 }
@@ -102,19 +122,18 @@ void timer(int v) {
             0, 0, 0,               // Look at the center of the cube
             0, 1, 0);              // Up vector
 
-  // Update cube positions based on their velocities
-  for (int i = 0; i < 2; ++i) {
-    cubePositions[i][0] += cubeVelocities[i]; // Move cubes along the x-axis
-    // Bounce logic: reverse velocity if the cube reaches a plane
-    if (cubePositions[i][0] > 4.5 || cubePositions[i][0] < -4.5) {
-      cubeVelocities[i] = -cubeVelocities[i];
-    }
+  // Update cube position
+  cubePosition += cubeDirection * 0.1f; // Adjust speed as necessary
+  if (cubePosition > 4.0f || cubePosition < -4.0f) { // Assuming the planes are at x = +/- 5
+    cubeDirection *= -1; // Reverse direction when a boundary is hit
   }
 
-  glutPostRedisplay(); // Redraw the scene
-  glutTimerFunc(1000/60, timer, v); // Re-register the timer callback
-}
+  // Redraw the scene by calling glutPostRedisplay
+  glutPostRedisplay();
 
+  // Register the timer callback function again
+  glutTimerFunc(1000/60, timer, v);
+}
 
 void reshape(int w, int h) {
   glViewport(0, 0, w, h);
@@ -128,34 +147,10 @@ int main(int argc, char** argv) {
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
   glutInitWindowSize(500, 500);
-  glutCreateWindow("Bouncing Cubes");
-  glClearColor(0.0, 0.0, 0.0, 1.0); // Set the background color
-
-  // Set up the projection matrix
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  gluPerspective(60.0, 1.0, 1.0, 100.0);
-
-  // Set up the modelview matrix
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-
-  // Set up the lighting and other state
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_LIGHTING);
-  glEnable(GL_LIGHT0);
-
-  // Set the display callback function
-  glutDisplayFunc(display);
-
-  // Set the reshape callback function
+  glutCreateWindow("The RGB Color Cube");
   glutReshapeFunc(reshape);
-
-  // Set the timer callback function
   glutTimerFunc(100, timer, 0);
-
-  // Start the main loop
+  glutDisplayFunc(display);
   glutMainLoop();
-
-  return 0; // This will never be reached
+  return 0;
 }
