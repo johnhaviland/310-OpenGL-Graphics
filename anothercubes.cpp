@@ -141,16 +141,16 @@ void keyboard(unsigned char key, int x, int y) {
       if (!isMoving) cameraY -= 0.5f;
       break;
     case '+': // Zoom in
-      if (!isMoving) {
-        zoom -= 0.1f;
-        if (zoom < 0.1f) zoom = 0.1f; // Prevent zooming too far in
-      }
+      zoom -= 0.1f;
+      if (zoom < 0.1f) zoom = 0.1f; // Prevent zooming too far in
+      break;
+    case '=': // Zoom in
+      zoom -= 0.1f;
+      if (zoom < 0.1f) zoom = 0.1f; // Prevent zooming too far in
       break;
     case '-': // Zoom out
-      if (!isMoving) {
-        zoom += 0.1f;
-        if (zoom > 5.0f) zoom = 5.0f; // Prevent zooming too far out
-      }
+      zoom += 0.1f;
+      if (zoom > 5.0f) zoom = 5.0f; // Prevent zooming too far out
       break;
     case 'r': // Rotate the whole scene when 'r' key is pressed
       rotationAngle += 5.0f; // Increment the angle by 5 degrees
@@ -200,7 +200,7 @@ void reshape(int w, int h) {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   GLfloat aspect = GLfloat(w) / GLfloat(h);
-  gluPerspective(60.0 * zoom, aspect, 0.5, 40.0); // Apply zoom to the perspective
+  gluPerspective(60.0 / zoom, aspect, 0.5, 40.0); // Apply zoom to the perspective
   glMatrixMode(GL_MODELVIEW);
 }
 
