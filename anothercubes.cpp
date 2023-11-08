@@ -97,7 +97,7 @@ void display() {
             0.0, 0.0, 0.0,                   // Look at the origin
             0.0, 1.0, 0.0);                  // Up vector is in positive Y direction
   // Apply the rotation to the whole scene
-  glRotatef(rotationAngle, 1.0f, 0.0f, 0.0f); // Rotate around the y-axis
+  glRotatef(rotationAngle, 0.0f, 1.0f, 0.0f); // Rotate around the y-axis
   
   // Draw the original cube with its original colors
   Cube::draw();
