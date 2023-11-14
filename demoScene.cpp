@@ -9,7 +9,7 @@ float basketSpeed = 0.02f;
 float ballX = 0.0f;
 float ballY = 0.0f;
 float ballSpeed = 0.05f;  // Adjusted for slower speed
-float ballArc = 1.0f;    // Adjusted to arch towards the side of the rim
+float ballArc = 1.5f;    // Arch towards center
 bool ballShot = false;
 
 int score = 0;
