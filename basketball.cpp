@@ -3,68 +3,64 @@
 #include <cmath>
 #include <iostream>
 
-// Constants and variables from the second code
 const float PI = 3.14159265359;
 const int num_segments = 100;
 
-float rotationAngleX = 80.0f; // Rotation angle around the x-axis
-float rotationAngleY = 0.0f; // Rotation angle around the y-axis
+float rotationAngleX = 80.0f; 
+float rotationAngleY = 0.0f;
 
-// Game variables
 float basketX = 0.0f;
 float basketSpeed = 0.02f;
 
 float ballX = 0.0f;
 float ballY = -0.9f;
-float ballSpeed = 0.05f;  // Adjusted for slower speed
-float ballArc = 1.0f;    // Adjusted to arch towards the side of the rim
+float ballSpeed = 0.05f;
+float ballArc = 1.5f;
+float ballGravity = -0.001f; 
+float ballSize = 0.05f;      
 bool ballShot = false;
 
 int score = 0;
 
-// Window size
 const int windowWidth = 1900;
 const int windowHeight = 1080;
 
-
-// Function to handle key presses
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_SPACE && action == GLFW_PRESS && !ballShot) {
         ballShot = true;
     }
 }
 
-// Function to update the game logic
 void updateGameLogic() {
-    // Update basket position
     basketX += basketSpeed;
-    if (basketX >= 1.0f || basketX <= -1.0f) {
+    if (basketX >= 2.0f || basketX <= -2.0f) {
         basketSpeed = -basketSpeed;
     }
 
-    // Update ball position and trajectory when shot
     if (ballShot) {
         ballX += ballSpeed * cos(ballArc);
         ballY += ballSpeed * sin(ballArc);
+        ballSpeed += ballGravity;
 
-        // Check if the ball is in the basket
-        if (fabs(ballX - basketX) < 0.2f && fabs(ballY) < 0.02f) {
+        if (fabs(ballX - basketX) < 0.1f && fabs(ballY - 1.0f) < 0.1f) {
             score++;
             ballShot = false;
             ballX = 0.0f;
             ballY = -0.9f;
+            ballSpeed = 0.05f;
         }
 
-        // Reset ball if it goes past the screen or reaches the top
-        if (ballX > 1.0f || ballX < -1.0f || ballY > 1.0f || ballY < -1.0f) {
+        if (ballX > 2.0f || ballX < -2.0f || ballY > 2.0f || ballY < -2.0f) {
             ballShot = false;
             ballX = 0.0f;
             ballY = -0.9f;
+            ballSpeed = 0.05f;
         }
+
+        ballSize = std::max(0.01f, 0.05f * (1.0f - (ballY + 0.9f) / 2.0f));
     }
 }
 
-// Function to draw a 3D circle for the hoop
 void draw3DCircle(float radius, float lineWidth) {
     glLineWidth(lineWidth);
     glBegin(GL_LINE_LOOP);
@@ -78,7 +74,6 @@ void draw3DCircle(float radius, float lineWidth) {
     glEnd();
 }
 
-
 int main() {
     // Initialize GLFW
     if (!glfwInit()) {
@@ -87,7 +82,7 @@ int main() {
     }
 
     // Create a windowed mode window and its OpenGL context
-    GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "Basketball Game", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "Basketball Flash Game", NULL, NULL);
     if (!window) {
         glfwTerminate();
         std::cerr << "Failed to create GLFW window" << std::endl;
@@ -128,10 +123,10 @@ int main() {
         // Draw the backboard
         glBegin(GL_QUADS);
         glColor3f(0.0f, 0.0f, 1.0f); // Blue color for the backboard
-        glVertex2f(basketX - 0.3f, 0.8f);
-        glVertex2f(basketX + 0.3f, 0.8f);
-        glVertex2f(basketX + 0.3f, 0.9f);
-        glVertex2f(basketX - 0.3f, 0.9f);
+        glVertex2f(basketX - 0.5f, 1.0f);
+        glVertex2f(basketX + 0.5f, 1.0f);
+        glVertex2f(basketX + 0.5f, 1.1f);
+        glVertex2f(basketX - 0.5f, 1.1f);
         glEnd();
 
         // Draw the rim
@@ -143,13 +138,13 @@ int main() {
         glVertex2f(basketX - 0.1f, 0.82f);
         glEnd();
 
-        // Draw the ball
+        // Draw the ball with variable size
         glBegin(GL_QUADS);
         glColor3f(1.0f, 0.647f, 0.0f); // Orange color for the ball
-        glVertex2f(ballX - 0.05f, ballY - 0.05f);
-        glVertex2f(ballX + 0.05f, ballY - 0.05f);
-        glVertex2f(ballX + 0.05f, ballY + 0.05f);
-        glVertex2f(ballX - 0.05f, ballY + 0.05f);
+        glVertex2f(ballX - ballSize, ballY - ballSize);
+        glVertex2f(ballX + ballSize, ballY - ballSize);
+        glVertex2f(ballX + ballSize, ballY + ballSize);
+        glVertex2f(ballX - ballSize, ballY + ballSize);
         glEnd();
 
         // Swap front and back buffers
