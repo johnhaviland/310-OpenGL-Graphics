@@ -108,19 +108,29 @@ void draw3DCircle(float radius, float lineWidth) {
     glEnd();
 }
 
-void drawNet() {
-    glColor3f(1.0f, 1.0f, 1.0f); // White color for the net
-    glLineWidth(2.0f);
+void drawBall(float x, float y, float radius) {
+    const int num_segments = 100;
+    const float PI = 3.14159265359;
 
-    glBegin(GL_LINES);
-    for (int i = 0; i < num_segments; ++i) {
+    glBegin(GL_TRIANGLE_FAN);
+    glColor3f(0.0f, 0.0f, 0.0f); // Black outline
+    glVertex2f(x, y); // Center of the circle
+    for (int i = 0; i <= num_segments; ++i) {
         float theta = 2.0f * PI * float(i) / float(num_segments);
-        float x1 = netX + netWidth / 2 * cosf(theta);
-        float y1 = netY - netHeight / 2 * sinf(theta);
-        float x2 = netX + netWidth / 2 * cosf(theta + 0.1f);
-        float y2 = netY - netHeight / 2 * sinf(theta + 0.1f);
-        glVertex2f(x1, y1);
-        glVertex2f(x2, y2);
+        float dx = radius * cosf(theta);
+        float dy = radius * sinf(theta);
+        glVertex2f(x + dx, y + dy);
+    }
+    glEnd();
+
+    glBegin(GL_TRIANGLE_FAN);
+    glColor3f(1.0f, 0.647f, 0.0f); // Orange color for the ball
+    glVertex2f(x, y);
+    for (int i = 0; i <= num_segments; ++i) {
+        float theta = 2.0f * PI * float(i) / float(num_segments);
+        float dx = (radius - 0.02f) * cosf(theta);
+        float dy = (radius - 0.02f) * sinf(theta);
+        glVertex2f(x + dx, y + dy);
     }
     glEnd();
 }
@@ -153,6 +163,7 @@ void updateHighScore(int currentScore) {
     }
 }
 
+
 int main() {
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW" << std::endl;
@@ -181,39 +192,46 @@ int main() {
     while (!glfwWindowShouldClose(window)) {
         updateGameLogic();
 
+        // Set the background color to light beige
+        glClearColor(0.937f, 0.882f, 0.788f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         glLoadIdentity();
         glTranslatef(0.0f, 0.0f, -5.0f);
 
+        glColor3f(1.0f, 0.0f, 0.0f);
         glPushMatrix();
         glTranslatef(basketX, 1.0f, 0.0f);
         glRotatef(rotationAngleX, 1.0f, 0.0f, 0.0f);
         draw3DCircle(0.2f, 2.0f);
         glPopMatrix();
 
+
         glBegin(GL_QUADS);
         glColor3f(0.0f, 0.0f, 1.0f);
-        glVertex2f(basketX - 0.5f, 1.0f);
-        glVertex2f(basketX + 0.5f, 1.0f);
-        glVertex2f(basketX + 0.5f, 1.1f);
-        glVertex2f(basketX - 0.5f, 1.1f);
+        glVertex2f(basketX - 0.5f, 1.4f);
+        glVertex2f(basketX + 0.5f, 1.4f);
+        glVertex2f(basketX + 0.5f, 0.8f);
+        glVertex2f(basketX - 0.5f, 0.8f);
         glEnd();
 
         glBegin(GL_QUADS);
-        glColor3f(1.0f, 0.0f, 0.0f);
-        glVertex2f(basketX - 0.1f, 0.8f);
-        glVertex2f(basketX + 0.1f, 0.8f);
-        glVertex2f(basketX + 0.1f, 0.82f);
-        glVertex2f(basketX - 0.1f, 0.82f);
+        glColor3f(1.0f, 0.0f, 0.0f); // Red color for the outline
+        glVertex2f(basketX - 0.12f, 1.0f); // Top-left vertex
+        glVertex2f(basketX + 0.12f, 1.0f); // Top-right vertex
+        glVertex2f(basketX + 0.12f, 0.8f); // Bottom-right vertex
+        glVertex2f(basketX - 0.12f, 0.8f); // Bottom-left vertex
         glEnd();
 
         glBegin(GL_QUADS);
-        glColor3f(1.0f, 0.647f, 0.0f);
-        glVertex2f(ballX - 0.05f, ballY - 0.05f);
-        glVertex2f(ballX + 0.05f, ballY - 0.05f);
-        glVertex2f(ballX + 0.05f, ballY + 0.05f);
-        glVertex2f(ballX - 0.05f, ballY + 0.05f);
+        glColor3f(0.0f, 0.0f, 1.0f); // Blue color for the inside
+        glVertex2f(basketX - 0.1f, 0.98f); // Top-left vertex
+        glVertex2f(basketX + 0.1f, 0.98f); // Top-right vertex
+        glVertex2f(basketX + 0.1f, 0.82f); // Bottom-right vertex
+        glVertex2f(basketX - 0.1f, 0.82f); // Bottom-left vertex
         glEnd();
+
+        drawBall(ballX, ballY, 0.05f);
 
         // drawNet();
 
