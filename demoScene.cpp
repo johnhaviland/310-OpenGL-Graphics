@@ -4,6 +4,14 @@
 #include <iostream>
 #include <chrono>
 #include <fstream>
+#include <vector>
+
+struct BallPosition {
+    float x, y;
+};
+
+std::vector<BallPosition> ballTrail;
+const int trailLength = 20; // Adjust as needed
 
 const float PI = 3.14159265359;
 const int num_segments = 100;
@@ -62,6 +70,15 @@ void updateGameLogic() {
             ballX = 0.0f;
             ballY = -0.9f;
         }
+        // Update ball trail
+        ballTrail.insert(ballTrail.begin(), {ballX, ballY});
+        if (ballTrail.size() > trailLength) {
+            ballTrail.pop_back();
+        }
+    } 
+    
+    else {
+        ballTrail.clear();
     }
 
     if (ballInNet) {
@@ -135,6 +152,15 @@ void drawBall(float x, float y, float radius) {
     glEnd();
 }
 
+void drawBallTrail() {
+    float trailRadius = 0.05f;
+    for (size_t i = 0; i < ballTrail.size(); ++i) {
+        float alpha = 1.0f - std::pow((float)i / ballTrail.size(), 5); // Adjust for a more gradual fade
+        glColor4f(1.0f, 0.647f, 0.0f, alpha); // Adjust color for the trail
+        drawBall(ballTrail[i].x, ballTrail[i].y, trailRadius * (1.0f - (float)i / ballTrail.size()));
+    }
+}
+
 void saveHighScore() {
     std::ofstream file("highscore.txt");
     if (file.is_open()) {
@@ -180,6 +206,7 @@ int main() {
     glfwMakeContextCurrent(window);
     glfwSetKeyCallback(window, key_callback);
 
+
     glViewport(0, 0, windowWidth, windowHeight);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -188,6 +215,9 @@ int main() {
     glLoadIdentity();
 
     loadHighScore();
+    
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     while (!glfwWindowShouldClose(window)) {
         updateGameLogic();
@@ -198,22 +228,24 @@ int main() {
 
         glLoadIdentity();
         glTranslatef(0.0f, 0.0f, -5.0f);
+	
+	// Draw the border for the backboard
+	glBegin(GL_QUADS);
+	glColor3f(0.3f, 0.3f, 0.3f); // Dark grey color for the border
+	glVertex2f(basketX - 0.525f, 1.425f); // Slightly larger than the backboard, but smaller border
+	glVertex2f(basketX + 0.525f, 1.425f);
+	glVertex2f(basketX + 0.525f, 0.775f);
+	glVertex2f(basketX - 0.525f, 0.775f);
+	glEnd();
 
-        glColor3f(1.0f, 0.0f, 0.0f);
-        glPushMatrix();
-        glTranslatef(basketX, 1.0f, 0.0f);
-        glRotatef(rotationAngleX, 1.0f, 0.0f, 0.0f);
-        draw3DCircle(0.2f, 2.0f);
-        glPopMatrix();
-
-
-        glBegin(GL_QUADS);
-        glColor3f(0.0f, 0.0f, 1.0f);
-        glVertex2f(basketX - 0.5f, 1.4f);
-        glVertex2f(basketX + 0.5f, 1.4f);
-        glVertex2f(basketX + 0.5f, 0.8f);
-        glVertex2f(basketX - 0.5f, 0.8f);
-        glEnd();
+	// Draw the backboard with a muted blue color
+	glBegin(GL_QUADS);
+	glColor3f(0.1f, 0.2f, 0.8f); // Sharper blue color
+	glVertex2f(basketX - 0.5f, 1.4f); // Original size of the backboard
+	glVertex2f(basketX + 0.5f, 1.4f);
+	glVertex2f(basketX + 0.5f, 0.8f);
+	glVertex2f(basketX - 0.5f, 0.8f);
+	glEnd();
 
         glBegin(GL_QUADS);
         glColor3f(1.0f, 0.0f, 0.0f); // Red color for the outline
@@ -224,13 +256,21 @@ int main() {
         glEnd();
 
         glBegin(GL_QUADS);
-        glColor3f(0.0f, 0.0f, 1.0f); // Blue color for the inside
+        glColor3f(0.1f, 0.2f, 0.8f); // Sharper blue color
         glVertex2f(basketX - 0.1f, 0.98f); // Top-left vertex
         glVertex2f(basketX + 0.1f, 0.98f); // Top-right vertex
         glVertex2f(basketX + 0.1f, 0.82f); // Bottom-right vertex
         glVertex2f(basketX - 0.1f, 0.82f); // Bottom-left vertex
         glEnd();
+        
+        glColor3f(1.0f, 0.0f, 0.0f);
+        glPushMatrix();
+        glTranslatef(basketX, 1.0f, 0.0f);
+        glRotatef(rotationAngleX, 1.0f, 0.0f, 0.0f);
+        draw3DCircle(0.2f, 2.0f);
+        glPopMatrix();
 
+	drawBallTrail(); // Draw the trail
         drawBall(ballX, ballY, 0.05f);
 
         // drawNet();
