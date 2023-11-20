@@ -6,10 +6,12 @@
 #include <fstream>
 #include <vector>
 
+// Ball object struct
 struct BallPosition {
     float x, y;
 };
 
+// variable initialization
 std::vector<BallPosition> ballTrail;
 const int trailLength = 20; // Adjust as needed
 
@@ -37,27 +39,35 @@ bool ballInNet = false;
 int score = 0;
 int highScore = 0;
 
+// window size
 const int windowWidth = 1900;
 const int windowHeight = 1080;
 
+// clock start
 std::chrono::time_point<std::chrono::steady_clock> startTime;
 
+// shoot ball with space bar
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_SPACE && action == GLFW_PRESS && !ballShot) {
         ballShot = true;
     }
 }
 
+// function to handle game logic
 void updateGameLogic() {
+
+    // flip basket if at edge
     basketX += basketSpeed;
     if (basketX >= 2.0f || basketX <= -2.0f) {
         basketSpeed = -basketSpeed;
     }
 
+    // ball logic handling
     if (ballShot) {
         ballX += ballSpeed * cos(ballArc);
         ballY += ballSpeed * sin(ballArc);
 
+        // if scored, increment score counter and reset ball
         if (fabs(ballX - basketX) < 0.1f && fabs(ballY - 1.0f) < 0.1f) {
             score++;
             ballShot = false;
@@ -65,11 +75,13 @@ void updateGameLogic() {
             ballY = -0.9f;
         }
 
+        // if not scored, reset ball
         if (ballX > 2.0f || ballX < -2.0f || ballY > 2.0f || ballY < -2.0f) {
             ballShot = false;
             ballX = 0.0f;
             ballY = -0.9f;
         }
+
         // Update ball trail
         ballTrail.insert(ballTrail.begin(), {ballX, ballY});
         if (ballTrail.size() > trailLength) {
@@ -96,6 +108,7 @@ void updateGameLogic() {
         gameStarted = true;
     }
 
+    // start game timer
     if (gameStarted) {
         auto currentTime = std::chrono::steady_clock::now();
         auto elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(currentTime - startTime).count();
@@ -104,6 +117,7 @@ void updateGameLogic() {
         }
     }
 
+    // register score
     if (ballShot) {
         if (ballX >= netX - netWidth / 2 && ballX <= netX + netWidth / 2 &&
             ballY <= netY && ballY >= netY - netHeight) {
@@ -112,6 +126,7 @@ void updateGameLogic() {
     }
 }
 
+// draw rim
 void draw3DCircle(float radius, float lineWidth) {
     glLineWidth(lineWidth);
     glBegin(GL_LINE_LOOP);
@@ -125,10 +140,12 @@ void draw3DCircle(float radius, float lineWidth) {
     glEnd();
 }
 
+// draw the ball
 void drawBall(float x, float y, float radius) {
     const int num_segments = 100;
     const float PI = 3.14159265359;
 
+    // outline
     glBegin(GL_TRIANGLE_FAN);
     glColor3f(0.0f, 0.0f, 0.0f); // Black outline
     glVertex2f(x, y); // Center of the circle
@@ -140,6 +157,7 @@ void drawBall(float x, float y, float radius) {
     }
     glEnd();
 
+    // inside
     glBegin(GL_TRIANGLE_FAN);
     glColor3f(1.0f, 0.647f, 0.0f); // Orange color for the ball
     glVertex2f(x, y);
@@ -152,15 +170,17 @@ void drawBall(float x, float y, float radius) {
     glEnd();
 }
 
+// draw trail by keeping track of previous ball potitions
 void drawBallTrail() {
     float trailRadius = 0.05f;
     for (size_t i = 0; i < ballTrail.size(); ++i) {
-        float alpha = 1.0f - std::pow((float)i / ballTrail.size(), 5); // Adjust for a more gradual fade
-        glColor4f(1.0f, 0.647f, 0.0f, alpha); // Adjust color for the trail
+        float alpha = 1.0f - std::pow((float)i / ballTrail.size(), 5); 
+        glColor4f(1.0f, 0.647f, 0.0f, alpha); 
         drawBall(ballTrail[i].x, ballTrail[i].y, trailRadius * (1.0f - (float)i / ballTrail.size()));
     }
 }
 
+// save high score to file
 void saveHighScore() {
     std::ofstream file("highscore.txt");
     if (file.is_open()) {
@@ -171,6 +191,7 @@ void saveHighScore() {
     }
 }
 
+// load high score from file
 void loadHighScore() {
     std::ifstream file("highscore.txt");
     if (file.is_open()) {
@@ -182,6 +203,7 @@ void loadHighScore() {
     }
 }
 
+// update high score
 void updateHighScore(int currentScore) {
     if (currentScore > highScore) {
         highScore = currentScore;
@@ -191,6 +213,8 @@ void updateHighScore(int currentScore) {
 
 
 int main() {
+
+    // initialize glfw, gl, glu
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW" << std::endl;
         return -1;
@@ -219,6 +243,7 @@ int main() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    // draw environment
     while (!glfwWindowShouldClose(window)) {
         updateGameLogic();
 
@@ -229,23 +254,23 @@ int main() {
         glLoadIdentity();
         glTranslatef(0.0f, 0.0f, -5.0f);
 	
-	// Draw the border for the backboard
-	glBegin(GL_QUADS);
-	glColor3f(0.3f, 0.3f, 0.3f); // Dark grey color for the border
-	glVertex2f(basketX - 0.525f, 1.425f); // Slightly larger than the backboard, but smaller border
-	glVertex2f(basketX + 0.525f, 1.425f);
-	glVertex2f(basketX + 0.525f, 0.775f);
-	glVertex2f(basketX - 0.525f, 0.775f);
-	glEnd();
+        // Draw the border for the backboard
+        glBegin(GL_QUADS);
+        glColor3f(0.3f, 0.3f, 0.3f); // Dark grey color for the border
+        glVertex2f(basketX - 0.525f, 1.425f); // Slightly larger than the backboard, but smaller border
+        glVertex2f(basketX + 0.525f, 1.425f);
+        glVertex2f(basketX + 0.525f, 0.775f);
+        glVertex2f(basketX - 0.525f, 0.775f);
+        glEnd();
 
-	// Draw the backboard with a muted blue color
-	glBegin(GL_QUADS);
-	glColor3f(0.1f, 0.2f, 0.8f); // Sharper blue color
-	glVertex2f(basketX - 0.5f, 1.4f); // Original size of the backboard
-	glVertex2f(basketX + 0.5f, 1.4f);
-	glVertex2f(basketX + 0.5f, 0.8f);
-	glVertex2f(basketX - 0.5f, 0.8f);
-	glEnd();
+        // Draw the backboard with a muted blue color
+        glBegin(GL_QUADS);
+        glColor3f(0.1f, 0.2f, 0.8f); // Sharper blue color
+        glVertex2f(basketX - 0.5f, 1.4f); // Original size of the backboard
+        glVertex2f(basketX + 0.5f, 1.4f);
+        glVertex2f(basketX + 0.5f, 0.8f);
+        glVertex2f(basketX - 0.5f, 0.8f);
+        glEnd();
 
         glBegin(GL_QUADS);
         glColor3f(1.0f, 0.0f, 0.0f); // Red color for the outline
@@ -270,7 +295,7 @@ int main() {
         draw3DCircle(0.2f, 2.0f);
         glPopMatrix();
 
-	drawBallTrail(); // Draw the trail
+	    drawBallTrail(); // Draw the trail
         drawBall(ballX, ballY, 0.05f);
 
         // drawNet();
