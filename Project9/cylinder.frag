@@ -12,8 +12,8 @@ uniform vec3 cylinderColor; // Receives cylinderColor uniform
 void main()
 {
     // ambient
-    float ambientStrength = 0.8;  // Set ambient strength
-    vec3 ambient = ambientStrength * lightColor;  // Sets ambient - multiplies strength decimal by light color
+    float ambientStrengh = 0.8;  // Set ambient strength
+    vec3 ambient = ambientStrengh * lightColor;  // Sets ambient - multiplies strength decimal by light color
   	
     // diffuse 
     vec3 norm = normalize(Normal);  // Normalizes normal
