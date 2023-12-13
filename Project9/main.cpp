@@ -61,14 +61,14 @@ int main() {
     glEnable(GL_DEPTH_TEST); // Set up OpenGL options
 
     // INSERT SHADERS HERE FOR PROJECT 10
-    Shader checkerboardShader("checkerboard.vs", "checkerboard.frag"); // Create shader for checkerboard
     Shader cubeShader("cube.vs", "cube.frag"); // Create shader for cube object
     Shader cylinderShader("cylinder.vs", "cylinder.frag"); // Create shader for cylinder object
     Shader sphereShader("sphere.vs", "sphere.frag"); // Create shader for sphere object
+    Shader checkerboardShader("checkerboard.vs", "checkerboard.frag"); // Create shader for checkerboard
 
     // Models for Cylinder and Sphere
-    Model cylinderModel("cylinder.obj"); // Defines model for cylinder using obj
     Model sphereModel("sphere.obj"); // Define model for sphere using obj
+    Model cylinderModel("cylinder.obj"); // Defines model for cylinder using obj
 
     GLfloat vertices[] = {
         // Coordinates: 3 Position, 3 Color, 2 Texture
@@ -154,7 +154,7 @@ int main() {
         glfwPollEvents(); // Callback glfwPollEvents to check for events
         do_movement(); // Callback do_movement()
 
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f); // Set background color
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Set background color
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear buffers
 
         
@@ -165,15 +165,16 @@ int main() {
         glm::mat4 model = glm::mat4(1.0f); // Initialize model to be 4x4 identity
 
         // BIND TEXTURES HERE PROJECT 10
-
+	
+	
         // CHECKERBOARD
         checkerboardShader.Use(); // Use checkerboard shader
-
+	
         GLint squareColorLoc = glGetUniformLocation(checkerboardShader.Program, "squareColor"); // Retrieve uniform location for squareColor
         GLint lightColorLoc = glGetUniformLocation(checkerboardShader.Program, "lightColor"); // Retrieve uniform location for lightColor
         GLint lightPosLoc = glGetUniformLocation(checkerboardShader.Program, "lightPos"); // Retrieve uniform location for lightPos
         GLint viewPosLoc = glGetUniformLocation(checkerboardShader.Program, "viewPos"); // Retrieve uniform location for viewPos
-
+	
         glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f); // Pass white color to lightColorLoc uniform
         glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z); // Pass light position to lightPosLoc uniform
         glUniform3f(viewPosLoc, camera.Position.x, camera.Position.y, camera.Position.z); // Pass camera position to viewPosLoc uniform
@@ -203,7 +204,8 @@ int main() {
                 
             }
         }
-
+	
+	
         // CUBE
         cubeShader.Use(); // Activate cube shader
 
@@ -233,36 +235,9 @@ int main() {
         // Draw cube
         glBindVertexArray(VAO); // Bind vertex arrays
         glDrawArrays(GL_TRIANGLES, 0, 36); // Draw cube
-
-        
-        // CYLINDER
-        cylinderShader.Use(); // Activate cylinder shader
-
-        GLint cylinderColorLoc = glGetUniformLocation(cylinderShader.Program, "cylinderColor"); // Retrieve cylinderColor location
-        lightColorLoc = glGetUniformLocation(cylinderShader.Program, "lightColor"); // Reset lightColor location
-        lightPosLoc = glGetUniformLocation(cylinderShader.Program, "lightPos"); // Reset lightPos location
-        viewPosLoc = glGetUniformLocation(cylinderShader.Program, "viewPos"); // Reset viewPos location
-
-        glUniform3f(cylinderColorLoc, 0.0f, 1.0f, 0.0f); // Pass color to uniform
-        glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f); // Pass light color to uniform
-        glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z); // Pass light position to uniform
-        glUniform3f(viewPosLoc, camera.Position.x, camera.Position.y, camera.Position.z); // Pass camera position to uniform
-
-        modelLoc = glGetUniformLocation(cylinderShader.Program, "model"); // Reset view location for cylinderShader
-        viewLoc = glGetUniformLocation(cylinderShader.Program, "view"); // Reset view location for cylinderShader
-        projLoc = glGetUniformLocation(cylinderShader.Program, "projection"); // Reset view location for cylinderShader
-
-        glm::mat4 view_cylinder = view; // Create mat4 view_cylinder using generic view identity
-        view_cylinder = glm::translate(view_cylinder, glm::vec3(-1.8f, -3.0f, -5.5f)); // Translate cylinder back, to the right, and down
-        view_cylinder = glm::scale(view_cylinder, glm::vec3(0.5, 3.0, 0.5)); // Increase height of cylinder
-
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view_cylinder)); // Pass view_cylinder to shader
-        glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection)); // Pass projection to shader
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model)); // Pass moel to shader
-
-        cylinderModel.Draw(cylinderShader); // Draw obj model
-
-        
+	
+	
+	
         // SPHERE
         sphereShader.Use(); // Activate sphereShader
 
@@ -289,6 +264,36 @@ int main() {
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model)); // Pass model to uniform
 
         sphereModel.Draw(sphereShader); // Draw sphere obj model
+	
+	
+        
+        // CYLINDER
+        cylinderShader.Use(); // Activate cylinder shader
+
+        GLint cylinderColorLoc = glGetUniformLocation(cylinderShader.Program, "cylinderColor"); // Retrieve cylinderColor location
+        lightColorLoc = glGetUniformLocation(cylinderShader.Program, "lightColor"); // Reset lightColor location
+        lightPosLoc = glGetUniformLocation(cylinderShader.Program, "lightPos"); // Reset lightPos location
+        viewPosLoc = glGetUniformLocation(cylinderShader.Program, "viewPos"); // Reset viewPos location
+
+        glUniform3f(cylinderColorLoc, 0.0f, 1.0f, 0.0f); // Pass color to uniform
+        glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f); // Pass light color to uniform
+        glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z); // Pass light position to uniform
+        glUniform3f(viewPosLoc, camera.Position.x, camera.Position.y, camera.Position.z); // Pass camera position to uniform
+
+        modelLoc = glGetUniformLocation(cylinderShader.Program, "model"); // Reset view location for cylinderShader
+        viewLoc = glGetUniformLocation(cylinderShader.Program, "view"); // Reset view location for cylinderShader
+        projLoc = glGetUniformLocation(cylinderShader.Program, "projection"); // Reset view location for cylinderShader
+
+        glm::mat4 view_cylinder = view; // Create mat4 view_cylinder using generic view identity
+        view_cylinder = glm::translate(view_cylinder, glm::vec3(-1.7f, -3.0f, -5.0f)); // Translate cylinder back, to the right, and down
+        view_cylinder = glm::scale(view_cylinder, glm::vec3(0.5, 3.0, 0.5)); // Increase height of cylinder
+
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view_cylinder)); // Pass view_cylinder to shader
+        glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection)); // Pass projection to shader
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model)); // Pass moel to shader
+
+        cylinderModel.Draw(cylinderShader); // Draw obj model
+        
 
         glBindVertexArray(0); // Bind zero at end
         glfwSwapBuffers(window); // Swap screen buffers
